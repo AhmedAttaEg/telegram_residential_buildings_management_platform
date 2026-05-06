@@ -96,11 +96,11 @@ Git excludes runtime and secret files correctly.
 
 ## 0.3 Create Documentation Structure
 
-* [ ] Create `docs/` directory.
-* [ ] Add `docs/PRD.md`.
-* [ ] Add `docs/BLUEPRINT.md`.
-* [ ] Add `docs/TASKS.md`.
-* [ ] Add `docs/README.md`.
+* [x] Create `docs/` directory.
+* [x] Add `docs/PRD.md`.
+* [x] Add `docs/BLUEPRINT.md`.
+* [x] Add `docs/TASKS.md`.
+* [] Add `docs/README.md`.
 
 ### WtD
 
