@@ -50,10 +50,10 @@
 
 ## 0.1 Create Laravel Project Skeleton
 
-* [ ] Create new Laravel application.
-* [ ] Verify Composer dependencies install successfully.
-* [ ] Ensure `.env.example` exists.
-* [ ] Do not install frontend starter kits initially.
+* [x] Create new Laravel application.
+* [x] Verify Composer dependencies install successfully.
+* [x] Ensure `.env.example` exists.
+* [x] Do not install frontend starter kits initially.
 
 ### WtD
 
@@ -73,10 +73,10 @@ Verify Laravel boots correctly.
 
 ## 0.2 Configure Git Hygiene
 
-* [ ] Configure `.gitignore`.
-* [ ] Ignore `.env`, vendor, logs, cache, dumps, and generated files.
-* [ ] Keep `.env.example` committed.
-* [ ] Add `.gitkeep` files where required.
+* [x] Configure `.gitignore`.
+* [x] Ignore `.env`, vendor, logs, cache, dumps, and generated files.
+* [x] Keep `.env.example` committed.
+* [x] Add `.gitkeep` files where required.
 
 ### WtD
 
@@ -100,7 +100,7 @@ Git excludes runtime and secret files correctly.
 * [x] Add `docs/PRD.md`.
 * [x] Add `docs/BLUEPRINT.md`.
 * [x] Add `docs/TASKS.md`.
-* [] Add `docs/README.md`.
+* [x] Add `docs/README.md`.
 
 ### WtD
 
@@ -114,10 +114,10 @@ Project documentation structure exists and is committed.
 
 ## 0.4 Configure Laravel Health Command
 
-* [ ] Create `app:health` command.
-* [ ] Verify Laravel boot.
-* [ ] Verify DB connectivity.
-* [ ] Print concise health report.
+* [x] Create `app:health` command.
+* [x] Verify Laravel boot.
+* [x] Verify DB connectivity.
+* [x] Print concise health report.
 
 ### WtD
 
@@ -137,11 +137,11 @@ Health command executes successfully.
 
 ## 1.1 Configure Environment Variables
 
-* [ ] Configure MySQL variables.
-* [ ] Configure queue variables.
-* [ ] Configure cache variables.
-* [ ] Configure mail variables.
-* [ ] Configure tenant defaults.
+* [x] Configure MySQL variables.
+* [x] Configure queue variables.
+* [x] Configure cache variables.
+* [x] Configure mail variables.
+* [x] Configure tenant defaults.
 
 ### WtD
 
@@ -155,10 +155,10 @@ Application boots successfully with documented environment variables.
 
 ## 1.2 Configure Localization
 
-* [ ] Configure Arabic locale.
-* [ ] Configure English locale.
-* [ ] Configure fallback locale.
-* [ ] Create translation directory structure.
+* [x] Configure Arabic locale.
+* [x] Configure English locale.
+* [x] Configure fallback locale.
+* [x] Create translation directory structure.
 
 ### WtD
 
@@ -172,10 +172,10 @@ Arabic and English localization work correctly.
 
 ## 1.3 Configure Queue System
 
-* [ ] Configure database queue driver.
-* [ ] Configure failed jobs table.
-* [ ] Configure queue workers.
-* [ ] Configure scheduler support.
+* [x] Configure database queue driver.
+* [x] Configure failed jobs table.
+* [x] Configure queue workers.
+* [x] Configure scheduler support.
 
 ### WtD
 
@@ -193,11 +193,11 @@ Queue worker executes without configuration errors.
 
 ## 1.4 Configure Logging Strategy
 
-* [ ] Configure daily logs.
-* [ ] Configure accounting logs.
-* [ ] Configure audit logs.
-* [ ] Configure API exception logging.
-* [ ] Configure sensitive-data redaction.
+* [x] Configure daily logs.
+* [x] Configure accounting logs.
+* [x] Configure audit logs.
+* [x] Configure API exception logging.
+* [x] Configure sensitive-data redaction.
 
 ### WtD
 
@@ -213,11 +213,11 @@ Structured logging works without leaking secrets.
 
 ## 2.1 Create Tenant Migration
 
-* [ ] Create `tenants` table.
-* [ ] Add tenant status.
-* [ ] Add subscription fields.
-* [ ] Add feature flags JSON.
-* [ ] Add branding fields.
+* [x] Create `tenants` table.
+* [x] Add tenant status.
+* [x] Add subscription fields.
+* [x] Add feature flags JSON.
+* [x] Add branding fields.
 
 ### WtD
 
@@ -231,10 +231,10 @@ Run migrations and inspect schema.
 
 ## 2.2 Create Tenant Model
 
-* [ ] Create `Tenant` model.
-* [ ] Add relationships.
-* [ ] Add casts.
-* [ ] Add scopes.
+* [x] Create `Tenant` model.
+* [x] Add relationships.
+* [x] Add casts.
+* [x] Add scopes.
 
 ### WtD
 
@@ -248,10 +248,10 @@ Tenant model works with relationships and scopes.
 
 ## 2.3 Create Tenant Middleware
 
-* [ ] Resolve tenant from request.
-* [ ] Validate active subscription.
-* [ ] Prevent cross-tenant access.
-* [ ] Attach tenant context globally.
+* [x] Resolve tenant from request.
+* [x] Validate active subscription.
+* [x] Prevent cross-tenant access.
+* [x] Attach tenant context globally.
 
 ### WtD
 
@@ -265,10 +265,10 @@ Tenant isolation works correctly.
 
 ## 2.4 Create Tenant Feature Flags System
 
-* [ ] Create feature flag structure.
-* [ ] Add tenant module toggles.
-* [ ] Add helper methods.
-* [ ] Add middleware support.
+* [x] Create feature flag structure.
+* [x] Add tenant module toggles.
+* [x] Add helper methods.
+* [x] Add middleware support.
 
 ### WtD
 
@@ -284,10 +284,10 @@ Tenant feature customization works.
 
 ## 3.1 Configure Sanctum Authentication
 
-* [ ] Install Sanctum.
-* [ ] Configure API authentication.
-* [ ] Configure token expiration.
-* [ ] Configure mobile token flow.
+* [x] Install Sanctum.
+* [x] Configure API authentication.
+* [x] Configure token expiration.
+* [x] Configure mobile token flow.
 
 ### WtD
 
@@ -301,11 +301,11 @@ API authentication works correctly.
 
 ## 3.2 Create Users Migration
 
-* [ ] Create `users` table.
-* [ ] Add tenant ownership.
-* [ ] Add role fields.
-* [ ] Add language preference.
-* [ ] Add status fields.
+* [x] Create `users` table.
+* [x] Add tenant ownership.
+* [x] Add role fields.
+* [x] Add language preference.
+* [x] Add status fields.
 
 ### WtD
 
@@ -319,10 +319,10 @@ Users table supports multi-tenant roles.
 
 ## 3.3 Create Roles & Permissions System
 
-* [ ] Create roles migration.
-* [ ] Create permissions migration.
-* [ ] Create pivot tables.
-* [ ] Add role middleware.
+* [x] Create roles migration.
+* [x] Create permissions migration.
+* [x] Create pivot tables.
+* [x] Add role middleware.
 
 ### WtD
 
@@ -336,11 +336,11 @@ Role-based authorization works correctly.
 
 ## 3.4 Seed Default Roles
 
-* [ ] Seed platform owner role.
-* [ ] Seed tenant owner role.
-* [ ] Seed accountant role.
-* [ ] Seed maintenance role.
-* [ ] Seed resident role.
+* [x] Seed platform owner role.
+* [x] Seed tenant owner role.
+* [x] Seed accountant role.
+* [x] Seed maintenance role.
+* [x] Seed resident role.
 
 ### WtD
 
@@ -356,10 +356,10 @@ Default platform roles are available.
 
 ## 4.1 Create Platform Owner Guard
 
-* [ ] Create owner middleware.
-* [ ] Restrict owner routes.
-* [ ] Prevent tenant escalation.
-* [ ] Add tests.
+* [x] Create owner middleware.
+* [x] Restrict owner routes.
+* [x] Prevent tenant escalation.
+* [x] Add tests.
 
 ### WtD
 
@@ -373,10 +373,10 @@ Only platform owners can access owner routes.
 
 ## 4.2 Create Tenant Management APIs
 
-* [ ] Create tenant CRUD APIs.
-* [ ] Add pagination.
-* [ ] Add filtering.
-* [ ] Add tenant status updates.
+* [x] Create tenant CRUD APIs.
+* [x] Add pagination.
+* [x] Add filtering.
+* [x] Add tenant status updates.
 
 ### WtD
 
@@ -390,10 +390,10 @@ Platform owner can manage tenant lifecycle.
 
 ## 4.3 Create Tenant Suspension Workflow
 
-* [ ] Add suspension service.
-* [ ] Add grace period support.
-* [ ] Add reminder support.
-* [ ] Prevent suspended tenant operations.
+* [x] Add suspension service.
+* [x] Add grace period support.
+* [x] Add reminder support.
+* [x] Prevent suspended tenant operations.
 
 ### WtD
 
@@ -409,10 +409,10 @@ Suspended tenants cannot use platform features.
 
 ## 5.1 Create Buildings Migration
 
-* [ ] Create `buildings` table.
-* [ ] Add tenant ownership.
-* [ ] Add address fields.
-* [ ] Add status fields.
+* [x] Create `buildings` table.
+* [x] Add tenant ownership.
+* [x] Add address fields.
+* [x] Add status fields.
 
 ### WtD
 
@@ -426,11 +426,11 @@ Buildings schema supports tenant isolation.
 
 ## 5.2 Create Apartments Migration
 
-* [ ] Create `apartments` table.
-* [ ] Add building ownership.
-* [ ] Add unit identifiers.
-* [ ] Add occupancy fields.
-* [ ] Do not use balance/debt as accounting truth.
+* [x] Create `apartments` table.
+* [x] Add building ownership.
+* [x] Add unit identifiers.
+* [x] Add occupancy fields.
+* [x] Do not use balance/debt as accounting truth.
 
 ### WtD
 
@@ -444,10 +444,10 @@ Apartment schema supports accounting linkage.
 
 ## 5.3 Create Buildings & Apartments Models
 
-* [ ] Add relationships.
-* [ ] Add scopes.
-* [ ] Add accessors.
-* [ ] Add tenant filtering.
+* [x] Add relationships.
+* [x] Add scopes.
+* [x] Add accessors.
+* [x] Add tenant filtering.
 
 ### WtD
 
@@ -463,10 +463,10 @@ Building and apartment relationships work correctly.
 
 ## 6.1 Create Residents Migration
 
-* [ ] Create `residents` table.
-* [ ] Add ownership fields.
-* [ ] Add tenant linkage.
-* [ ] Add contact fields.
+* [x] Create `residents` table.
+* [x] Add ownership fields.
+* [x] Add tenant linkage.
+* [x] Add contact fields.
 
 ### WtD
 
@@ -480,10 +480,10 @@ Residents schema supports ownership tracking.
 
 ## 6.2 Create Occupancy Migration
 
-* [ ] Create `apartment_residents` pivot.
-* [ ] Add ownership percentages.
-* [ ] Add occupancy dates.
-* [ ] Add tenancy types.
+* [x] Create `apartment_residents` pivot.
+* [x] Add ownership percentages.
+* [x] Add occupancy dates.
+* [x] Add tenancy types.
 
 ### WtD
 
@@ -499,10 +499,10 @@ Resident occupancy relationships work correctly.
 
 ## 7.1 Create Financial Periods Migration
 
-* [ ] Create `financial_periods` table.
-* [ ] Add tenant linkage.
-* [ ] Add period status.
-* [ ] Add locking support.
+* [x] Create `financial_periods` table.
+* [x] Add tenant linkage.
+* [x] Add period status.
+* [x] Add locking support.
 
 ### WtD
 
@@ -516,10 +516,10 @@ Financial periods support accounting lifecycle.
 
 ## 7.2 Create Wallet Transactions Migration
 
-* [ ] Create wallet ledger table.
-* [ ] Add transaction types.
-* [ ] Add reversal support.
-* [ ] Add indexes.
+* [x] Create wallet ledger table.
+* [x] Add transaction types.
+* [x] Add reversal support.
+* [x] Add indexes.
 
 ### WtD
 
@@ -533,10 +533,10 @@ Wallet ledger schema supports accounting truth.
 
 ## 7.3 Create Debit Transactions Migration
 
-* [ ] Create debit ledger table.
-* [ ] Add manual debit types.
-* [ ] Add payment linkage.
-* [ ] Add reversal support.
+* [x] Create debit ledger table.
+* [x] Add manual debit types.
+* [x] Add payment linkage.
+* [x] Add reversal support.
 
 ### WtD
 
@@ -550,10 +550,10 @@ Debit ledger supports audit-safe accounting.
 
 ## 7.4 Create Expenses Migration
 
-* [ ] Create expenses table.
-* [ ] Add building linkage.
-* [ ] Add creator tracking.
-* [ ] Add approval status.
+* [x] Create expenses table.
+* [x] Add building linkage.
+* [x] Add creator tracking.
+* [x] Add approval status.
 
 ### WtD
 
@@ -567,10 +567,10 @@ Expense schema supports future workflows.
 
 ## 7.5 Create Expense Splits Migration
 
-* [ ] Create expense splits table.
-* [ ] Add apartment linkage.
-* [ ] Add confirmation fields.
-* [ ] Add payment status.
+* [x] Create expense splits table.
+* [x] Add apartment linkage.
+* [x] Add confirmation fields.
+* [x] Add payment status.
 
 ### WtD
 
@@ -584,10 +584,10 @@ Expense split workflow is supported.
 
 ## 7.6 Create Expense Payments Migration
 
-* [ ] Create expense payments table.
-* [ ] Add wallet linkage.
-* [ ] Add reversal fields.
-* [ ] Add audit fields.
+* [x] Create expense payments table.
+* [x] Add wallet linkage.
+* [x] Add reversal fields.
+* [x] Add audit fields.
 
 ### WtD
 
@@ -603,10 +603,10 @@ Expense payments support audit-safe reversals.
 
 ## 8.1 Create WalletService
 
-* [ ] Implement wallet balance calculation.
-* [ ] Implement deposits.
-* [ ] Implement deductions.
-* [ ] Implement reversal support.
+* [x] Implement wallet balance calculation.
+* [x] Implement deposits.
+* [x] Implement deductions.
+* [x] Implement reversal support.
 
 ### WtD
 
@@ -620,10 +620,10 @@ Wallet balances derive only from ledger transactions.
 
 ## 8.2 Create DebitService
 
-* [ ] Implement debit calculations.
-* [ ] Implement manual debit logic.
-* [ ] Implement debit payments.
-* [ ] Implement reversal support.
+* [x] Implement debit calculations.
+* [x] Implement manual debit logic.
+* [x] Implement debit payments.
+* [x] Implement reversal support.
 
 ### WtD
 
@@ -637,11 +637,11 @@ Debit balances derive from transactions and unpaid splits.
 
 ## 8.3 Create ExpensePaymentService
 
-* [ ] Implement split payment workflow.
-* [ ] Deduct wallet balance.
-* [ ] Create payment records.
-* [ ] Prevent duplicate payments.
-* [ ] Support reversals.
+* [x] Implement split payment workflow.
+* [x] Deduct wallet balance.
+* [x] Create payment records.
+* [x] Prevent duplicate payments.
+* [x] Support reversals.
 
 ### WtD
 
@@ -657,10 +657,10 @@ Expense payment workflow is audit-safe and transactional.
 
 ## 9.1 Implement Payment Reversal Service
 
-* [ ] Create reversal transactions.
-* [ ] Restore balances.
-* [ ] Reopen splits.
-* [ ] Preserve original records.
+* [x] Create reversal transactions.
+* [x] Restore balances.
+* [x] Reopen splits.
+* [x] Preserve original records.
 
 ### WtD
 
@@ -674,10 +674,10 @@ Reversals restore balances without deleting history.
 
 ## 9.2 Implement Reversal Audit Logs
 
-* [ ] Log reversal actor.
-* [ ] Log timestamps.
-* [ ] Log original transaction linkage.
-* [ ] Log reversal reason.
+* [x] Log reversal actor.
+* [x] Log timestamps.
+* [x] Log original transaction linkage.
+* [x] Log reversal reason.
 
 ### WtD
 
@@ -693,10 +693,10 @@ All reversals are fully auditable.
 
 ## 10.1 Create Chart of Accounts
 
-* [ ] Create accounts migration.
-* [ ] Add account hierarchy.
-* [ ] Add account types.
-* [ ] Add tenant linkage.
+* [x] Create accounts migration.
+* [x] Add account hierarchy.
+* [x] Add account types.
+* [x] Add tenant linkage.
 
 ### WtD
 
@@ -710,10 +710,10 @@ Chart of accounts supports enterprise accounting.
 
 ## 10.2 Create Journal Entries
 
-* [ ] Create journal entries migration.
-* [ ] Create journal lines migration.
-* [ ] Enforce balancing.
-* [ ] Add posting support.
+* [x] Create journal entries migration.
+* [x] Create journal lines migration.
+* [x] Enforce balancing.
+* [x] Add posting support.
 
 ### WtD
 
@@ -727,10 +727,10 @@ Journal entries enforce double-entry accounting.
 
 ## 10.3 Create Trial Balance Reports
 
-* [ ] Calculate account balances.
-* [ ] Group accounts.
-* [ ] Generate summaries.
-* [ ] Add export support.
+* [x] Calculate account balances.
+* [x] Group accounts.
+* [x] Generate summaries.
+* [x] Add export support.
 
 ### WtD
 
@@ -746,10 +746,10 @@ Trial balance reflects journal activity correctly.
 
 ## 11.1 Create Maintenance Tickets Migration
 
-* [ ] Create tickets table.
-* [ ] Add priorities.
-* [ ] Add assignment fields.
-* [ ] Add status fields.
+* [x] Create tickets table.
+* [x] Add priorities.
+* [x] Add assignment fields.
+* [x] Add status fields.
 
 ### WtD
 
@@ -763,10 +763,10 @@ Ticketing system supports operational workflows.
 
 ## 11.2 Create Work Orders Migration
 
-* [ ] Create work orders table.
-* [ ] Link tickets.
-* [ ] Add technician assignment.
-* [ ] Add SLA tracking.
+* [x] Create work orders table.
+* [x] Link tickets.
+* [x] Add technician assignment.
+* [x] Add SLA tracking.
 
 ### WtD
 
@@ -782,10 +782,10 @@ Work order lifecycle works correctly.
 
 ## 12.1 Create Notification Infrastructure
 
-* [ ] Configure database notifications.
-* [ ] Configure email notifications.
-* [ ] Configure Telegram notifications.
-* [ ] Configure queue dispatch.
+* [x] Configure database notifications.
+* [x] Configure email notifications.
+* [x] Configure Telegram notifications.
+* [x] Configure queue dispatch.
 
 ### WtD
 
@@ -799,10 +799,10 @@ Notifications work asynchronously.
 
 ## 12.2 Create Subscription Reminder Notifications
 
-* [ ] Notify before expiration.
-* [ ] Notify on grace period.
-* [ ] Notify on suspension.
-* [ ] Support configurable schedules.
+* [x] Notify before expiration.
+* [x] Notify on grace period.
+* [x] Notify on suspension.
+* [x] Support configurable schedules.
 
 ### WtD
 
@@ -818,10 +818,10 @@ Subscription notifications work correctly.
 
 ## 13.1 Create Subscription Plans Migration
 
-* [ ] Create plans table.
-* [ ] Add pricing fields.
-* [ ] Add feature limits.
-* [ ] Add billing cycle fields.
+* [x] Create plans table.
+* [x] Add pricing fields.
+* [x] Add feature limits.
+* [x] Add billing cycle fields.
 
 ### WtD
 
@@ -835,10 +835,10 @@ Subscription plans support SaaS billing.
 
 ## 13.2 Create Tenant Subscriptions Migration
 
-* [ ] Create subscriptions table.
-* [ ] Add plan linkage.
-* [ ] Add status fields.
-* [ ] Add renewal dates.
+* [x] Create subscriptions table.
+* [x] Add plan linkage.
+* [x] Add status fields.
+* [x] Add renewal dates.
 
 ### WtD
 
@@ -854,10 +854,10 @@ Tenant subscriptions support lifecycle management.
 
 ## 14.1 Configure API Versioning
 
-* [ ] Create API v1 routes.
-* [ ] Configure namespaces.
-* [ ] Configure authentication.
-* [ ] Configure throttling.
+* [x] Create API v1 routes.
+* [x] Configure namespaces.
+* [x] Configure authentication.
+* [x] Configure throttling.
 
 ### WtD
 
@@ -871,10 +871,10 @@ Versioned APIs work correctly.
 
 ## 14.2 Create API Response Standard
 
-* [ ] Create success formatter.
-* [ ] Create error formatter.
-* [ ] Add pagination format.
-* [ ] Add validation format.
+* [x] Create success formatter.
+* [x] Create error formatter.
+* [x] Add pagination format.
+* [x] Add validation format.
 
 ### WtD
 
@@ -890,10 +890,10 @@ API responses are standardized.
 
 ## 15.1 Create Wallet APIs
 
-* [ ] Create wallet summary endpoint.
-* [ ] Create wallet history endpoint.
-* [ ] Add pagination.
-* [ ] Add tenant isolation.
+* [x] Create wallet summary endpoint.
+* [x] Create wallet history endpoint.
+* [x] Add pagination.
+* [x] Add tenant isolation.
 
 ### WtD
 
@@ -907,10 +907,10 @@ Residents can retrieve wallet history securely.
 
 ## 15.2 Create Debit APIs
 
-* [ ] Create debit summary endpoint.
-* [ ] Create unpaid splits endpoint.
-* [ ] Add filtering.
-* [ ] Add tenant isolation.
+* [x] Create debit summary endpoint.
+* [x] Create unpaid splits endpoint.
+* [x] Add filtering.
+* [x] Add tenant isolation.
 
 ### WtD
 
@@ -1287,4 +1287,3 @@ Subscription lifecycle works correctly.
 * Documentation exists for all critical roles.
 * Platform is scalable toward VPS/cloud migration.
 * AI-ready architecture foundation exists.
-
