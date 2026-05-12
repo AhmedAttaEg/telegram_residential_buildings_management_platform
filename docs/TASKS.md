@@ -926,10 +926,10 @@ Residents can retrieve debit information securely.
 
 ## 16.1 Create Mobile Authentication Flow
 
-* [ ] Add mobile login APIs.
-* [ ] Add token refresh flow.
-* [ ] Add logout endpoints.
-* [ ] Add device tracking.
+* [x] Add mobile login APIs.
+* [x] Add token refresh flow.
+* [x] Add logout endpoints.
+* [x] Add device tracking.
 
 ### WtD
 
@@ -943,10 +943,10 @@ Mobile authentication flow works correctly.
 
 ## 16.2 Create Mobile API Documentation
 
-* [ ] Generate endpoint documentation.
-* [ ] Document authentication.
-* [ ] Document error responses.
-* [ ] Document pagination.
+* [x] Generate endpoint documentation.
+* [x] Document authentication.
+* [x] Document error responses.
+* [x] Document pagination.
 
 ### WtD
 

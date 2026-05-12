@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Illuminate\Support\Facades\Log;
@@ -85,6 +86,17 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return ApiResponse::error('Too many requests.', Response::HTTP_TOO_MANY_REQUESTS);
+        });
+
+        $exceptions->render(function (HttpExceptionInterface $exception, Request $request) {
+            if (! ApiResponse::isApiRequest($request)) {
+                return null;
+            }
+
+            return ApiResponse::error(
+                $exception->getMessage() !== '' ? $exception->getMessage() : Response::$statusTexts[$exception->getStatusCode()],
+                $exception->getStatusCode(),
+            );
         });
 
         $exceptions->render(function (\Throwable $throwable, Request $request) {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\MobileAuthController;
 use App\Http\Controllers\Api\V1\Owner\TenantController;
 use App\Http\Controllers\Api\V1\Resident\ResidentPortalController;
 use App\Models\Tenant;
@@ -22,6 +23,16 @@ Route::prefix('auth')->group(function (): void {
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
+    });
+});
+
+Route::prefix('mobile/auth')->group(function (): void {
+    Route::post('/login', [MobileAuthController::class, 'login'])->middleware('throttle:api-auth');
+
+    Route::middleware(['throttle:api', 'auth:sanctum'])->group(function (): void {
+        Route::post('/refresh', [MobileAuthController::class, 'refresh']);
+        Route::post('/logout', [MobileAuthController::class, 'logout']);
+        Route::post('/logout-all', [MobileAuthController::class, 'logoutAll']);
     });
 });
 
