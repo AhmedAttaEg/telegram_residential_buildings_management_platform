@@ -10,3 +10,5 @@ Artisan::command('inspire', function () {
 
 Schedule::command('queue:prune-failed --hours=168')->daily();
 Schedule::command('subscriptions:send-reminders')->daily();
+Schedule::command('backups:run')->dailyAt((string) config('operations.backups.schedule.run_at', '02:00'));
+Schedule::command('backups:cleanup')->dailyAt((string) config('operations.backups.schedule.cleanup_at', '02:30'));

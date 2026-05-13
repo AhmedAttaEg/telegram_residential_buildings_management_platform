@@ -1091,10 +1091,10 @@ N+1 query problems are eliminated.
 
 ## 20.1 Configure Shared Hosting Deployment
 
-* [ ] Configure production environment.
-* [ ] Configure storage permissions.
-* [ ] Configure queues.
-* [ ] Configure scheduler.
+* [x] Configure production environment.
+* [x] Configure storage permissions.
+* [x] Configure queues.
+* [x] Configure scheduler.
 
 ### WtD
 
@@ -1108,10 +1108,10 @@ Application deploys successfully on shared hosting.
 
 ## 20.2 Configure Automated Backups
 
-* [ ] Configure DB backups.
-* [ ] Configure storage backups.
-* [ ] Configure retention policy.
-* [ ] Configure restore testing.
+* [x] Configure DB backups.
+* [x] Configure storage backups.
+* [x] Configure retention policy.
+* [x] Configure restore testing.
 
 ### WtD
 

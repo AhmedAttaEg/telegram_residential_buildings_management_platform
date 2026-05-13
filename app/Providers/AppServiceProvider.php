@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Contracts\ShellCommandRunner;
 use App\Models\DebitTransaction;
 use App\Models\Expense;
 use App\Models\ExpensePayment;
@@ -18,6 +19,7 @@ use App\Models\WalletTransaction;
 use App\Observers\ModelAuditObserver;
 use App\Observers\PermissionRoleObserver;
 use App\Observers\RoleUserObserver;
+use App\Support\SymfonyShellCommandRunner;
 use App\Support\TenantContext;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -33,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(TenantContext::class, fn () => new TenantContext());
+        $this->app->singleton(ShellCommandRunner::class, SymfonyShellCommandRunner::class);
     }
 
     /**

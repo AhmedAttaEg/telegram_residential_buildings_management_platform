@@ -11,7 +11,9 @@ class AppEnvCheckCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:env-check';
+    protected $signature = 'app:env-check
+        {--file= : The environment file to validate}
+        {--reference=.env.example : The reference environment template file}';
 
     /**
      * The console command description.
@@ -25,8 +27,13 @@ class AppEnvCheckCommand extends Command
      */
     public function handle(): int
     {
-        $exampleVariables = $this->parseEnvironmentFile(base_path('.env.example'));
-        $environmentVariables = $this->parseEnvironmentFile($this->environmentFilePath());
+        $referencePath = $this->resolveEnvironmentPath((string) $this->option('reference'));
+        $targetPath = $this->option('file') !== null
+            ? $this->resolveEnvironmentPath((string) $this->option('file'))
+            : $this->environmentFilePath();
+
+        $exampleVariables = $this->parseEnvironmentFile($referencePath);
+        $environmentVariables = $this->parseEnvironmentFile($targetPath);
 
         $missingVariables = array_values(array_diff(array_keys($exampleVariables), array_keys($environmentVariables)));
 
@@ -73,5 +80,14 @@ class AppEnvCheckCommand extends Command
         }
 
         return base_path(app()->environmentFile());
+    }
+
+    private function resolveEnvironmentPath(string $path): string
+    {
+        if (str_starts_with($path, DIRECTORY_SEPARATOR) || preg_match('/^[A-Za-z]:\\\\/', $path) === 1) {
+            return $path;
+        }
+
+        return base_path($path);
     }
 }
