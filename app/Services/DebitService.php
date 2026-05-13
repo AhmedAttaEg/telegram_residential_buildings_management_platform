@@ -20,22 +20,25 @@ class DebitService
     public function getBalance(Apartment $apartment): float
     {
         $unpaidSplits = ExpenseSplit::query()
-            ->where('tenant_id', $apartment->tenant_id)
-            ->where('apartment_id', $apartment->id)
-            ->where('is_confirmed', true)
-            ->where('is_paid', false)
-            ->where('is_reversed', false)
+            ->outstandingForApartment($apartment)
             ->sum('amount');
 
         $ledgerBalance = DebitTransaction::query()
-            ->where('tenant_id', $apartment->tenant_id)
-            ->where('apartment_id', $apartment->id)
-            ->get()
-            ->reduce(function (float $carry, DebitTransaction $transaction): float {
-                return $carry + $this->signedAmount($transaction);
-            }, 0.0);
+            ->from('debit_transactions as transactions')
+            ->leftJoin('debit_transactions as original_transactions', 'original_transactions.id', '=', 'transactions.reversal_of_id')
+            ->where('transactions.tenant_id', $apartment->tenant_id)
+            ->where('transactions.apartment_id', $apartment->id)
+            ->selectRaw("
+                COALESCE(SUM(CASE
+                    WHEN transactions.type = 'payment' THEN -transactions.amount
+                    WHEN transactions.type = 'reversal' AND original_transactions.type = 'payment' THEN transactions.amount
+                    WHEN transactions.type = 'reversal' THEN -transactions.amount
+                    ELSE transactions.amount
+                END), 0) as balance
+            ")
+            ->value('balance');
 
-        return (float) $unpaidSplits + $ledgerBalance;
+        return round((float) $unpaidSplits + (float) $ledgerBalance, 2);
     }
 
     /**
@@ -117,24 +120,5 @@ class DebitService
             'payment_reference_id' => $attributes['payment_reference_id'] ?? null,
             'description' => $attributes['description'] ?? null,
         ]);
-    }
-
-    private function signedAmount(DebitTransaction $transaction): float
-    {
-        if ($transaction->type === 'payment') {
-            return -1 * (float) $transaction->amount;
-        }
-
-        if ($transaction->type === 'reversal') {
-            $original = $transaction->reversalOf;
-
-            if ($original !== null && $original->type === 'payment') {
-                return (float) $transaction->amount;
-            }
-
-            return -1 * (float) $transaction->amount;
-        }
-
-        return (float) $transaction->amount;
     }
 }

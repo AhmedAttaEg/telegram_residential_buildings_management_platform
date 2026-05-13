@@ -53,7 +53,7 @@ class EnsureResidentHasApartmentAccess
         }
 
         $request->attributes->set('resident', $resident);
-        $request->attributes->set('resident_apartment', $apartment);
+        $request->attributes->set('resident_apartment', $apartment->loadMissing('building'));
 
         return $next($request);
     }

@@ -40,19 +40,19 @@ class SubscriptionReminderService
         $windowEnd = $now->copy()->addDays($leadDays);
 
         $tenants = Tenant::query()
-            ->where('status', 'active')
-            ->whereIn('subscription_status', ['trial', 'active'])
+            ->dueTrialExpirationReminders($now, $windowEnd)
             ->get()
-            ->filter(function (Tenant $tenant) use ($now, $windowEnd): bool {
-                $expiresAt = $this->expirationDate($tenant);
+            ->concat(
+                Tenant::query()
+                    ->dueActiveExpirationReminders($now, $windowEnd)
+                    ->get()
+            )
+            ->values();
 
-                return $expiresAt !== null
-                    && $expiresAt->between($now, $windowEnd)
-                    && $tenant->reminder_sent_at === null;
-            });
+        $recipientsByTenant = $this->recipientResolver->tenantOwnersForTenants($tenants);
 
         foreach ($tenants as $tenant) {
-            $recipients = $this->recipientResolver->tenantOwners($tenant);
+            $recipients = $recipientsByTenant->get($tenant->id, collect());
 
             if ($recipients->isEmpty()) {
                 continue;
@@ -86,13 +86,14 @@ class SubscriptionReminderService
         $sent = 0;
 
         $tenants = Tenant::query()
-            ->where('status', 'active')
-            ->where('subscription_status', 'grace')
-            ->whereNotNull('grace_ends_at')
+            ->dueGraceNotifications()
             ->get();
 
+        $recipientsByTenant = $this->recipientResolver->tenantOwnersForTenants($tenants);
+        $reminderKeysByTenant = $this->existingReminderKeysByTenant($recipientsByTenant, SubscriptionGraceNotification::class);
+
         foreach ($tenants as $tenant) {
-            $recipients = $this->recipientResolver->tenantOwners($tenant);
+            $recipients = $recipientsByTenant->get($tenant->id, collect());
 
             if ($recipients->isEmpty()) {
                 continue;
@@ -100,7 +101,7 @@ class SubscriptionReminderService
 
             $reminderKey = 'subscription_grace:'.$tenant->grace_ends_at?->toIso8601String();
 
-            if ($this->hasNotificationBeenSent($recipients, SubscriptionGraceNotification::class, $tenant->id, $reminderKey)) {
+            if (($reminderKeysByTenant[$tenant->id][$reminderKey] ?? false) === true) {
                 continue;
             }
 
@@ -125,13 +126,14 @@ class SubscriptionReminderService
         $sent = 0;
 
         $tenants = Tenant::query()
-            ->where('status', 'suspended')
-            ->where('subscription_status', 'suspended')
-            ->whereNotNull('suspended_at')
+            ->dueSuspensionNotifications()
             ->get();
 
+        $recipientsByTenant = $this->recipientResolver->tenantOwnersForTenants($tenants);
+        $reminderKeysByTenant = $this->existingReminderKeysByTenant($recipientsByTenant, SubscriptionSuspendedNotification::class);
+
         foreach ($tenants as $tenant) {
-            $recipients = $this->recipientResolver->tenantOwners($tenant);
+            $recipients = $recipientsByTenant->get($tenant->id, collect());
 
             if ($recipients->isEmpty()) {
                 continue;
@@ -139,7 +141,7 @@ class SubscriptionReminderService
 
             $reminderKey = 'subscription_suspended:'.$tenant->suspended_at?->toIso8601String();
 
-            if ($this->hasNotificationBeenSent($recipients, SubscriptionSuspendedNotification::class, $tenant->id, $reminderKey)) {
+            if (($reminderKeysByTenant[$tenant->id][$reminderKey] ?? false) === true) {
                 continue;
             }
 
@@ -164,25 +166,39 @@ class SubscriptionReminderService
     }
 
     /**
-     * @param  Collection<int, User>  $recipients
+     * @param  Collection<int, Collection<int, User>>  $recipientsByTenant
+     * @return array<int, array<string, bool>>
      */
-    private function hasNotificationBeenSent(
-        Collection $recipients,
-        string $notificationClass,
-        int $tenantId,
-        string $reminderKey,
-    ): bool {
+    private function existingReminderKeysByTenant(Collection $recipientsByTenant, string $notificationClass): array
+    {
+        $recipientIds = $recipientsByTenant
+            ->flatten(1)
+            ->pluck('id')
+            ->unique()
+            ->values();
+
+        if ($recipientIds->isEmpty()) {
+            return [];
+        }
+
         $notifications = DatabaseNotification::query()
-            ->whereIn('notifiable_id', $recipients->pluck('id'))
+            ->whereIn('notifiable_id', $recipientIds)
             ->where('notifiable_type', User::class)
             ->where('type', $notificationClass)
             ->get();
 
-        return $notifications->contains(function (DatabaseNotification $notification) use ($tenantId, $reminderKey): bool {
+        $keys = [];
+
+        foreach ($notifications as $notification) {
             $data = $notification->data;
 
-            return ($data['tenant_id'] ?? null) === $tenantId
-                && ($data['reminder_key'] ?? null) === $reminderKey;
-        });
+            if (! isset($data['tenant_id'], $data['reminder_key'])) {
+                continue;
+            }
+
+            $keys[(int) $data['tenant_id']][(string) $data['reminder_key']] = true;
+        }
+
+        return $keys;
     }
 }

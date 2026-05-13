@@ -1055,10 +1055,10 @@ Accounting calculations are reliable.
 
 ## 19.1 Add Database Index Review
 
-* [ ] Review accounting indexes.
-* [ ] Review tenant indexes.
-* [ ] Review reporting indexes.
-* [ ] Add missing composite indexes.
+* [x] Review accounting indexes.
+* [x] Review tenant indexes.
+* [x] Review reporting indexes.
+* [x] Add missing composite indexes.
 
 ### WtD
 
@@ -1072,10 +1072,10 @@ Critical queries are indexed efficiently.
 
 ## 19.2 Prevent N+1 Queries
 
-* [ ] Review Eloquent relationships.
-* [ ] Add eager loading.
-* [ ] Add query scopes.
-* [ ] Add performance tests.
+* [x] Review Eloquent relationships.
+* [x] Add eager loading.
+* [x] Add query scopes.
+* [x] Add performance tests.
 
 ### WtD
 

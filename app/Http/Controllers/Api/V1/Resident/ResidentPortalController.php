@@ -42,9 +42,8 @@ class ResidentPortalController extends Controller
         $apartment = $this->apartment($request);
 
         $transactions = WalletTransaction::query()
-            ->where('tenant_id', $apartment->tenant_id)
-            ->where('apartment_id', $apartment->id)
-            ->latest('id')
+            ->forApartment($apartment)
+            ->latestFirst()
             ->paginate((int) $request->integer('per_page', 15));
 
         $transactions->getCollection()->transform(function (WalletTransaction $transaction): array {
@@ -96,11 +95,7 @@ class ResidentPortalController extends Controller
 
         $query = ExpenseSplit::query()
             ->with(['expense', 'financialPeriod'])
-            ->where('tenant_id', $apartment->tenant_id)
-            ->where('apartment_id', $apartment->id)
-            ->where('is_confirmed', true)
-            ->where('is_paid', false)
-            ->where('is_reversed', false)
+            ->outstandingForApartment($apartment)
             ->latest('id');
 
         if ($request->filled('building_id')) {
@@ -166,7 +161,7 @@ class ResidentPortalController extends Controller
         /** @var Apartment $apartment */
         $apartment = $request->attributes->get('resident_apartment');
 
-        return $apartment->loadMissing('building');
+        return $apartment;
     }
 
     /**

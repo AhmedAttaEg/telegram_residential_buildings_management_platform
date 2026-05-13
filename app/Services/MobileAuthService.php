@@ -18,7 +18,7 @@ class MobileAuthService
     public function login(array $credentials, ?string $ipAddress = null): array
     {
         $user = User::query()
-            ->with(['tenant', 'roles.permissions'])
+            ->withAuthContext()
             ->where('email', $credentials['email'])
             ->first();
 
@@ -119,7 +119,7 @@ class MobileAuthService
             'expires_at' => $accessToken->expires_at?->toISOString(),
             'user' => $user->toAuthSummary(),
             'tenant' => $user->tenant?->only(['id', 'name', 'slug', 'status']),
-            'roles' => $user->roles->pluck('slug')->values(),
+            'roles' => $user->roleSlugs(),
             'permissions' => $user->permissionSlugs(),
             'device' => [
                 'token_id' => $accessToken->id,

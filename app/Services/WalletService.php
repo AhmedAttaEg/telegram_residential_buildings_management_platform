@@ -13,13 +13,17 @@ class WalletService
 {
     public function getBalance(Apartment $apartment): float
     {
-        return WalletTransaction::query()
-            ->where('tenant_id', $apartment->tenant_id)
-            ->where('apartment_id', $apartment->id)
-            ->get()
-            ->reduce(function (float $carry, WalletTransaction $transaction): float {
-                return $carry + $this->signedAmount($transaction);
-            }, 0.0);
+        $balance = WalletTransaction::query()
+            ->forApartment($apartment)
+            ->selectRaw("
+                COALESCE(SUM(CASE
+                    WHEN direction = 'credit' THEN amount
+                    ELSE -amount
+                END), 0) as balance
+            ")
+            ->value('balance');
+
+        return round((float) $balance, 2);
     }
 
     /**
@@ -117,12 +121,5 @@ class WalletService
             'reference_id' => $attributes['reference_id'] ?? null,
             'description' => $attributes['description'] ?? null,
         ]);
-    }
-
-    private function signedAmount(WalletTransaction $transaction): float
-    {
-        return $transaction->direction === 'credit'
-            ? (float) $transaction->amount
-            : -1 * (float) $transaction->amount;
     }
 }

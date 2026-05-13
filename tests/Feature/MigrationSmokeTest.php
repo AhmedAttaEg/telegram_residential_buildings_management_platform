@@ -51,12 +51,14 @@ class MigrationSmokeTest extends TestCase
     public function test_critical_indexes_exist_for_accounting_and_tenant_queries(): void
     {
         $this->assertTrue(Schema::hasIndex('wallet_transactions', ['tenant_id', 'apartment_id']));
+        $this->assertTrue(Schema::hasIndex('wallet_transactions', ['tenant_id', 'apartment_id', 'id']));
         $this->assertTrue(Schema::hasIndex('wallet_transactions', ['tenant_id', 'financial_period_id']));
         $this->assertTrue(Schema::hasIndex('wallet_transactions', ['tenant_id', 'type']));
         $this->assertTrue(Schema::hasIndex('wallet_transactions', ['apartment_id', 'reversed_at']));
         $this->assertTrue(Schema::hasIndex('wallet_transactions', ['reversal_of_id']));
 
         $this->assertTrue(Schema::hasIndex('debit_transactions', ['tenant_id', 'apartment_id']));
+        $this->assertTrue(Schema::hasIndex('debit_transactions', ['tenant_id', 'apartment_id', 'id']));
         $this->assertTrue(Schema::hasIndex('debit_transactions', ['tenant_id', 'financial_period_id']));
         $this->assertTrue(Schema::hasIndex('debit_transactions', ['tenant_id', 'type']));
         $this->assertTrue(Schema::hasIndex('debit_transactions', ['reversal_of_id']));
@@ -69,17 +71,31 @@ class MigrationSmokeTest extends TestCase
         $this->assertTrue(Schema::hasIndex('expense_splits', ['apartment_id', 'is_reversed']));
         $this->assertTrue(Schema::hasIndex('expense_splits', ['tenant_id', 'building_id']));
         $this->assertTrue(Schema::hasIndex('expense_splits', ['tenant_id', 'financial_period_id']));
+        $this->assertTrue(Schema::hasIndex('expense_splits', ['tenant_id', 'apartment_id', 'is_confirmed', 'is_paid', 'is_reversed', 'id']));
 
         $this->assertTrue(Schema::hasIndex('journal_entries', ['tenant_id', 'status']));
         $this->assertTrue(Schema::hasIndex('journal_entries', ['tenant_id', 'financial_period_id']));
         $this->assertTrue(Schema::hasIndex('journal_entries', ['tenant_id', 'entry_date']));
+        $this->assertTrue(Schema::hasIndex('journal_entries', ['tenant_id', 'status', 'financial_period_id']));
 
         $this->assertTrue(Schema::hasIndex('journal_entry_lines', ['tenant_id', 'journal_entry_id']));
         $this->assertTrue(Schema::hasIndex('journal_entry_lines', ['tenant_id', 'ledger_account_id']));
 
+        $this->assertTrue(Schema::hasIndex('users', ['tenant_id', 'status']));
+        $this->assertTrue(Schema::hasIndex('role_user', ['user_id', 'role_id']));
+        $this->assertTrue(Schema::hasIndex('permission_role', ['role_id', 'permission_id']));
+        $this->assertTrue(Schema::hasIndex('notifications', ['notifiable_type', 'type', 'notifiable_id']));
+
         $this->assertTrue(Schema::hasIndex('tenant_subscriptions', ['tenant_id', 'status']));
         $this->assertTrue(Schema::hasIndex('tenant_subscriptions', ['tenant_id', 'renews_at']));
         $this->assertTrue(Schema::hasIndex('tenant_subscriptions', ['tenant_id', 'ends_at']));
+        $this->assertTrue(Schema::hasIndex('tenant_subscriptions', ['status', 'renews_at']));
+        $this->assertTrue(Schema::hasIndex('tenant_subscriptions', ['status', 'ends_at']));
+
+        $this->assertTrue(Schema::hasIndex('tenants', ['status', 'subscription_status', 'trial_ends_at', 'reminder_sent_at']));
+        $this->assertTrue(Schema::hasIndex('tenants', ['status', 'subscription_status', 'subscription_ends_at', 'reminder_sent_at']));
+        $this->assertTrue(Schema::hasIndex('tenants', ['status', 'subscription_status', 'grace_ends_at']));
+        $this->assertTrue(Schema::hasIndex('tenants', ['status', 'subscription_status', 'suspended_at']));
 
         $this->assertTrue(Schema::hasIndex('audit_logs', ['tenant_id', 'event']));
     }

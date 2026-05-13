@@ -18,7 +18,7 @@ class AuthController extends Controller
         ]);
 
         $user = \App\Models\User::query()
-            ->with(['tenant', 'roles.permissions'])
+            ->withAuthContext()
             ->where('email', $credentials['email'])
             ->first();
 
@@ -41,7 +41,7 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
             'user' => $user->toAuthSummary(),
             'tenant' => $user->tenant?->only(['id', 'name', 'slug', 'status']),
-            'roles' => $user->roles->pluck('slug')->values(),
+            'roles' => $user->roleSlugs(),
         ], 'Authenticated successfully.');
     }
 
@@ -54,12 +54,12 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        $user = $request->user()->load(['tenant', 'roles.permissions']);
+        $user = $request->user()->loadMissing(['tenant', 'roles.permissions']);
 
         return $this->apiSuccess([
             'user' => $user->toAuthSummary(),
             'tenant' => $user->tenant?->only(['id', 'name', 'slug', 'status']),
-            'roles' => $user->roles->pluck('slug')->values(),
+            'roles' => $user->roleSlugs(),
             'permissions' => $user->permissionSlugs(),
         ]);
     }

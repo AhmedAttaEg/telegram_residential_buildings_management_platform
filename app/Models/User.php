@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Pivots\RoleUser;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -119,12 +120,35 @@ class User extends Authenticatable
         return $this->permissionSlugs()->contains($permission);
     }
 
+    public function roleSlugs()
+    {
+        return $this->roles
+            ->pluck('slug')
+            ->unique()
+            ->values();
+    }
+
     public function permissionSlugs()
     {
         return $this->roles
             ->flatMap(fn (Role $role) => $role->permissions->pluck('slug'))
             ->unique()
             ->values();
+    }
+
+    public function scopeForTenant(Builder $query, int|Tenant $tenant): void
+    {
+        $query->where('tenant_id', $tenant instanceof Tenant ? $tenant->id : $tenant);
+    }
+
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('status', 'active');
+    }
+
+    public function scopeWithAuthContext(Builder $query): void
+    {
+        $query->with(['tenant', 'roles.permissions']);
     }
 
     /**

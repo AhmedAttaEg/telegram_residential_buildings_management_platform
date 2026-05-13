@@ -80,4 +80,15 @@ class DebitTransaction extends Model
     {
         $query->where('tenant_id', $tenant instanceof Tenant ? $tenant->id : $tenant);
     }
+
+    public function scopeForApartment(Builder $query, Apartment $apartment): void
+    {
+        $query->where('tenant_id', $apartment->tenant_id)
+            ->where('apartment_id', $apartment->id);
+    }
+
+    public function scopeLatestFirst(Builder $query): void
+    {
+        $query->latest('id');
+    }
 }

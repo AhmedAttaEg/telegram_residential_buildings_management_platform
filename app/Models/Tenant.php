@@ -169,6 +169,36 @@ class Tenant extends Model
             });
     }
 
+    public function scopeDueTrialExpirationReminders(Builder $query, Carbon $startsAt, Carbon $endsAt): void
+    {
+        $query->where('status', 'active')
+            ->where('subscription_status', 'trial')
+            ->whereNull('reminder_sent_at')
+            ->whereBetween('trial_ends_at', [$startsAt, $endsAt]);
+    }
+
+    public function scopeDueActiveExpirationReminders(Builder $query, Carbon $startsAt, Carbon $endsAt): void
+    {
+        $query->where('status', 'active')
+            ->where('subscription_status', 'active')
+            ->whereNull('reminder_sent_at')
+            ->whereBetween('subscription_ends_at', [$startsAt, $endsAt]);
+    }
+
+    public function scopeDueGraceNotifications(Builder $query): void
+    {
+        $query->where('status', 'active')
+            ->where('subscription_status', 'grace')
+            ->whereNotNull('grace_ends_at');
+    }
+
+    public function scopeDueSuspensionNotifications(Builder $query): void
+    {
+        $query->where('status', 'suspended')
+            ->where('subscription_status', 'suspended')
+            ->whereNotNull('suspended_at');
+    }
+
     public function isSuspended(): bool
     {
         return $this->status === 'suspended' || $this->suspended_at !== null;

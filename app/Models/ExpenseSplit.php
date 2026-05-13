@@ -83,4 +83,13 @@ class ExpenseSplit extends Model
     {
         $query->where('tenant_id', $tenant instanceof Tenant ? $tenant->id : $tenant);
     }
+
+    public function scopeOutstandingForApartment(Builder $query, Apartment $apartment): void
+    {
+        $query->where('tenant_id', $apartment->tenant_id)
+            ->where('apartment_id', $apartment->id)
+            ->where('is_confirmed', true)
+            ->where('is_paid', false)
+            ->where('is_reversed', false);
+    }
 }
