@@ -27,7 +27,7 @@ class SubscriptionReminderNotificationsTest extends TestCase
 
     public function test_expiring_subscription_command_dispatches_owner_only_notifications_and_marks_reminder_sent(): void
     {
-        Queue::fake();
+        $this->fakeQueue();
 
         config([
             'notifications.subscription_reminders.expiration_lead_days' => 7,
@@ -58,7 +58,7 @@ class SubscriptionReminderNotificationsTest extends TestCase
 
     public function test_grace_and_suspension_notifications_dispatch_when_due(): void
     {
-        Queue::fake();
+        $this->fakeQueue();
 
         $graceTenant = Tenant::factory()->create([
             'subscription_status' => 'grace',

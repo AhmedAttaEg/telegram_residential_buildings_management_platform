@@ -18,7 +18,7 @@ class AppEnvCheckCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Verify that all variables documented in .env.example exist in .env.';
+    protected $description = 'Verify that all variables documented in .env.example exist in the active environment file.';
 
     /**
      * Execute the console command.
@@ -26,7 +26,7 @@ class AppEnvCheckCommand extends Command
     public function handle(): int
     {
         $exampleVariables = $this->parseEnvironmentFile(base_path('.env.example'));
-        $environmentVariables = $this->parseEnvironmentFile(base_path('.env'));
+        $environmentVariables = $this->parseEnvironmentFile($this->environmentFilePath());
 
         $missingVariables = array_values(array_diff(array_keys($exampleVariables), array_keys($environmentVariables)));
 
@@ -64,5 +64,14 @@ class AppEnvCheckCommand extends Command
         }
 
         return $variables;
+    }
+
+    private function environmentFilePath(): string
+    {
+        if (app()->environment('testing') && is_file(base_path('.env.testing'))) {
+            return base_path('.env.testing');
+        }
+
+        return base_path(app()->environmentFile());
     }
 }

@@ -998,10 +998,10 @@ Critical operations are audited automatically.
 
 ## 18.1 Configure Testing Environment
 
-* [ ] Configure `.env.testing`.
-* [ ] Configure testing database.
-* [ ] Configure queue fakes.
-* [ ] Configure notification fakes.
+* [x] Configure `.env.testing`.
+* [x] Configure testing database.
+* [x] Configure queue fakes.
+* [x] Configure notification fakes.
 
 ### WtD
 
@@ -1019,10 +1019,10 @@ Testing environment boots successfully.
 
 ## 18.2 Create Migration Smoke Tests
 
-* [ ] Test fresh migrations.
-* [ ] Verify key tables.
-* [ ] Verify indexes.
-* [ ] Verify foreign keys.
+* [x] Test fresh migrations.
+* [x] Verify key tables.
+* [x] Verify indexes.
+* [x] Verify foreign keys.
 
 ### WtD
 
@@ -1036,10 +1036,10 @@ Database schema is test-verified.
 
 ## 18.3 Create Accounting Integrity Tests
 
-* [ ] Test wallet calculations.
-* [ ] Test debit calculations.
-* [ ] Test expense payments.
-* [ ] Test reversals.
+* [x] Test wallet calculations.
+* [x] Test debit calculations.
+* [x] Test expense payments.
+* [x] Test reversals.
 
 ### WtD
 
