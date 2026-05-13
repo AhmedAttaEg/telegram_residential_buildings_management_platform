@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Pivots\RoleUser;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -68,7 +69,9 @@ class User extends Authenticatable
 
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class)->withTimestamps();
+        return $this->belongsToMany(Role::class)
+            ->using(RoleUser::class)
+            ->withTimestamps();
     }
 
     public function journalEntries(): HasMany

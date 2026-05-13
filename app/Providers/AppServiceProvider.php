@@ -2,7 +2,22 @@
 
 namespace App\Providers;
 
+use App\Models\DebitTransaction;
+use App\Models\Expense;
+use App\Models\ExpensePayment;
+use App\Models\ExpenseSplit;
+use App\Models\JournalEntry;
+use App\Models\JournalEntryLine;
+use App\Models\LedgerAccount;
 use App\Models\PersonalAccessToken;
+use App\Models\Pivots\PermissionRole;
+use App\Models\Pivots\RoleUser;
+use App\Models\Tenant;
+use App\Models\TenantSubscription;
+use App\Models\WalletTransaction;
+use App\Observers\ModelAuditObserver;
+use App\Observers\PermissionRoleObserver;
+use App\Observers\RoleUserObserver;
 use App\Support\TenantContext;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -26,6 +41,24 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
+        foreach ([
+            DebitTransaction::class,
+            Expense::class,
+            ExpensePayment::class,
+            ExpenseSplit::class,
+            JournalEntry::class,
+            JournalEntryLine::class,
+            LedgerAccount::class,
+            Tenant::class,
+            TenantSubscription::class,
+            WalletTransaction::class,
+        ] as $auditedModel) {
+            $auditedModel::observe(ModelAuditObserver::class);
+        }
+
+        PermissionRole::observe(PermissionRoleObserver::class);
+        RoleUser::observe(RoleUserObserver::class);
 
         RateLimiter::for('api', function (Request $request): Limit {
             $key = $request->user()?->getAuthIdentifier() ?? $request->ip();

@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Models\Pivots;
+
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
+class PermissionRole extends Pivot
+{
+    public $incrementing = true;
+
+    /**
+     * @var list<string>
+     */
+    protected $fillable = [
+        'permission_id',
+        'role_id',
+    ];
+}

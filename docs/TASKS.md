@@ -962,10 +962,10 @@ Mobile integration documentation is complete.
 
 ## 17.1 Create Audit Logs Migration
 
-* [ ] Create audit logs table.
-* [ ] Add actor tracking.
-* [ ] Add subject tracking.
-* [ ] Add old/new values.
+* [x] Create audit logs table.
+* [x] Add actor tracking.
+* [x] Add subject tracking.
+* [x] Add old/new values.
 
 ### WtD
 
@@ -979,10 +979,10 @@ Audit logs persist correctly.
 
 ## 17.2 Add Audit Observers
 
-* [ ] Observe accounting models.
-* [ ] Observe subscription changes.
-* [ ] Observe permission changes.
-* [ ] Observe tenant changes.
+* [x] Observe accounting models.
+* [x] Observe subscription changes.
+* [x] Observe permission changes.
+* [x] Observe tenant changes.
 
 ### WtD
 
