@@ -1127,10 +1127,10 @@ Backup and restore workflows operate correctly.
 
 ## 21.1 Create Platform Owner Documentation
 
-* [ ] Document tenant management.
-* [ ] Document subscriptions.
-* [ ] Document feature flags.
-* [ ] Document suspension workflows.
+* [x] Document tenant management.
+* [x] Document subscriptions.
+* [x] Document feature flags.
+* [x] Document suspension workflows.
 
 ### WtD
 
@@ -1144,10 +1144,10 @@ Platform owner documentation is complete.
 
 ## 21.2 Create Accountant Documentation
 
-* [ ] Document expense workflows.
-* [ ] Document payment workflows.
-* [ ] Document reversals.
-* [ ] Document financial periods.
+* [x] Document expense workflows.
+* [x] Document payment workflows.
+* [x] Document reversals.
+* [x] Document financial periods.
 
 ### WtD
 
@@ -1161,10 +1161,10 @@ Accountant workflows are fully documented.
 
 ## 21.3 Create Resident Documentation
 
-* [ ] Document wallet system.
-* [ ] Document debit system.
-* [ ] Document payments.
-* [ ] Document maintenance requests.
+* [x] Document wallet system.
+* [x] Document debit system.
+* [x] Document payments.
+* [x] Document maintenance requests.
 
 ### WtD
 
