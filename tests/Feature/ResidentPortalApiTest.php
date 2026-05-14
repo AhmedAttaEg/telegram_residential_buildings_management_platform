@@ -200,6 +200,42 @@ class ResidentPortalApiTest extends TestCase
             ->assertJsonPath('message', 'Apartment access is not allowed.');
     }
 
+    public function test_resident_portal_filters_do_not_leak_other_tenant_financial_records(): void
+    {
+        [$tenant, $residentUser, $resident, $apartment, $period, $building] = $this->createResidentFixture();
+        [$otherTenant, , , $otherApartment, $otherPeriod, $otherBuilding] = $this->createResidentFixture();
+        $walletService = app(WalletService::class);
+
+        $walletService->deposit($apartment, 300, [
+            'resident' => $resident,
+            'financial_period' => $period,
+            'description' => 'Tenant deposit',
+        ]);
+        $walletService->deposit($otherApartment, 450, [
+            'financial_period' => $otherPeriod,
+            'description' => 'Foreign deposit',
+        ]);
+
+        $this->createSplit($tenant, $building, $apartment, $period, 100, 'Tenant split');
+        $foreignSplit = $this->createSplit($otherTenant, $otherBuilding, $otherApartment, $otherPeriod, 250, 'Foreign split');
+
+        Sanctum::actingAs($residentUser->load('roles.permissions', 'resident'));
+
+        $this->getJson("/api/v1/t/{$tenant->slug}/resident/apartments/{$apartment->id}/wallet/history?per_page=5")
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.description', 'Tenant deposit')
+            ->assertJsonMissing(['description' => 'Foreign deposit']);
+
+        $this->getJson("/api/v1/t/{$tenant->slug}/resident/apartments/{$apartment->id}/debit/unpaid-splits?building_id={$otherBuilding->id}&financial_period_id={$otherPeriod->id}&per_page=5")
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonCount(0, 'data')
+            ->assertJsonPath('meta.filters.building_id', $otherBuilding->id)
+            ->assertJsonPath('meta.filters.financial_period_id', $otherPeriod->id)
+            ->assertJsonMissing(['id' => $foreignSplit->id]);
+    }
+
     /**
      * @return array{Tenant, User, Resident, Apartment, FinancialPeriod, Building}
      */

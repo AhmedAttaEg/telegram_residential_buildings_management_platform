@@ -92,6 +92,20 @@ class AuthorizationConfigurationTest extends TestCase
             ->assertJsonPath('message', 'Cross-tenant access is not allowed.');
     }
 
+    public function test_platform_owner_cannot_use_resident_portal_routes_without_resident_profile(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $owner = User::factory()->create();
+        $owner->roles()->attach(Role::query()->where('slug', 'platform_owner')->value('id'));
+
+        Sanctum::actingAs($owner->load('roles.permissions'));
+
+        $this->getJson("/api/v1/t/{$tenant->slug}/resident/apartments/999999/wallet/summary")
+            ->assertForbidden()
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('message', 'Resident profile is required.');
+    }
+
     public function test_tenant_permission_route_requires_assigned_permission(): void
     {
         $tenant = Tenant::factory()->create();
@@ -114,5 +128,19 @@ class AuthorizationConfigurationTest extends TestCase
             ->assertForbidden()
             ->assertJsonPath('success', false)
             ->assertJsonPath('message', 'Permission [maintenance.access] is required.');
+    }
+
+    public function test_accounting_dashboard_requires_accounting_permission_even_for_authenticated_tenant_users(): void
+    {
+        $tenant = Tenant::factory()->create();
+        $residentUser = User::factory()->forTenant($tenant)->create();
+        $residentUser->roles()->attach(Role::query()->where('slug', 'resident')->value('id'));
+
+        Sanctum::actingAs($residentUser->load('roles.permissions'));
+
+        $this->getJson('/api/v1/accounting/dashboard')
+            ->assertForbidden()
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('message', 'Permission [accounting.access] is required.');
     }
 }

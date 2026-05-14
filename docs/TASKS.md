@@ -1216,10 +1216,10 @@ AI accounting analysis foundation exists.
 
 ## 23.1 Verify Tenant Isolation
 
-* [ ] Verify cross-tenant protection.
-* [ ] Verify API isolation.
-* [ ] Verify accounting isolation.
-* [ ] Verify permissions.
+* [x] Verify cross-tenant protection.
+* [x] Verify API isolation.
+* [x] Verify accounting isolation.
+* [x] Verify permissions.
 
 ### WtD
 
@@ -1233,10 +1233,10 @@ Tenant isolation is fully enforced.
 
 ## 23.2 Verify Accounting Integrity
 
-* [ ] Verify wallet calculations.
-* [ ] Verify debit calculations.
-* [ ] Verify reversals.
-* [ ] Verify financial periods.
+* [x] Verify wallet calculations.
+* [x] Verify debit calculations.
+* [x] Verify reversals.
+* [x] Verify financial periods.
 
 ### WtD
 

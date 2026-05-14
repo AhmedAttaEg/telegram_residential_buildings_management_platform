@@ -220,6 +220,58 @@ class EnterpriseAccountingTest extends TestCase
         ]);
     }
 
+    public function test_journal_entry_service_rejects_cross_tenant_actor_and_period_without_partial_writes(): void
+    {
+        [$tenant, $user, $period] = $this->createEnterpriseFixture();
+        $foreignActor = User::factory()->forTenant(Tenant::factory()->create())->create();
+        $foreignPeriod = FinancialPeriod::query()->create([
+            'tenant_id' => Tenant::factory()->create()->id,
+            'name' => 'Foreign Period',
+            'period_type' => 'monthly',
+            'starts_at' => '2026-02-01',
+            'ends_at' => '2026-02-28',
+            'status' => 'open',
+        ]);
+        $cash = $this->createLedgerAccount($tenant, '1100', 'Cash', LedgerAccount::TYPE_ASSET);
+        $revenue = $this->createLedgerAccount($tenant, '4100', 'Service Revenue', LedgerAccount::TYPE_REVENUE);
+        $service = app(JournalEntryService::class);
+
+        try {
+            $service->createDraftEntry($tenant, $foreignActor, $period, [
+                [
+                    'ledger_account_id' => $cash->id,
+                    'debit_amount' => 200,
+                ],
+                [
+                    'ledger_account_id' => $revenue->id,
+                    'credit_amount' => 200,
+                ],
+            ]);
+            $this->fail('Expected actor tenant mismatch.');
+        } catch (DomainException $exception) {
+            $this->assertSame('Actor tenant mismatch.', $exception->getMessage());
+        }
+
+        try {
+            $service->createDraftEntry($tenant, $user, $foreignPeriod, [
+                [
+                    'ledger_account_id' => $cash->id,
+                    'debit_amount' => 200,
+                ],
+                [
+                    'ledger_account_id' => $revenue->id,
+                    'credit_amount' => 200,
+                ],
+            ]);
+            $this->fail('Expected financial period tenant mismatch.');
+        } catch (DomainException $exception) {
+            $this->assertSame('Financial period tenant mismatch.', $exception->getMessage());
+        }
+
+        $this->assertDatabaseCount('journal_entries', 0);
+        $this->assertDatabaseCount('journal_entry_lines', 0);
+    }
+
     public function test_journal_entry_service_rejects_posting_in_locked_periods(): void
     {
         [$tenant, $user] = $this->createEnterpriseFixture();
@@ -253,6 +305,40 @@ class EnterpriseAccountingTest extends TestCase
         $this->expectExceptionMessage('Financial period is locked.');
 
         $service->postEntry($entry, $user);
+    }
+
+    public function test_journal_entry_service_rejects_cross_tenant_posting_without_mutating_entry_state(): void
+    {
+        [$tenant, $user, $period] = $this->createEnterpriseFixture();
+        $foreignActor = User::factory()->forTenant(Tenant::factory()->create())->create();
+        $cash = $this->createLedgerAccount($tenant, '1100', 'Cash', LedgerAccount::TYPE_ASSET);
+        $revenue = $this->createLedgerAccount($tenant, '4100', 'Service Revenue', LedgerAccount::TYPE_REVENUE);
+        $service = app(JournalEntryService::class);
+
+        $entry = $service->createDraftEntry($tenant, $user, $period, [
+            [
+                'ledger_account_id' => $cash->id,
+                'debit_amount' => 200,
+            ],
+            [
+                'ledger_account_id' => $revenue->id,
+                'credit_amount' => 200,
+            ],
+        ]);
+
+        try {
+            $service->postEntry($entry, $foreignActor);
+            $this->fail('Expected actor tenant mismatch.');
+        } catch (DomainException $exception) {
+            $this->assertSame('Actor tenant mismatch.', $exception->getMessage());
+        }
+
+        $entry = $entry->fresh();
+
+        $this->assertSame(JournalEntry::STATUS_DRAFT, $entry->status);
+        $this->assertNull($entry->posted_at);
+        $this->assertDatabaseCount('journal_entries', 1);
+        $this->assertDatabaseCount('journal_entry_lines', 2);
     }
 
     public function test_trial_balance_service_calculates_groups_summaries_and_csv_export(): void

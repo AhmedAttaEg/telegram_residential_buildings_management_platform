@@ -270,6 +270,187 @@ class AccountingServicesTest extends TestCase
         $this->assertFalse($split->fresh()->is_paid);
     }
 
+    public function test_wallet_and_debit_services_reject_cross_tenant_resident_and_period_inputs_without_partial_writes(): void
+    {
+        [$tenant, $user, $building, $apartment, $resident, $period] = $this->createAccountingFixture();
+        $otherTenant = Tenant::factory()->create();
+        $foreignResident = Resident::factory()->create([
+            'tenant_id' => $otherTenant->id,
+        ]);
+        $foreignPeriod = FinancialPeriod::query()->create([
+            'tenant_id' => $otherTenant->id,
+            'name' => 'Foreign Period',
+            'period_type' => 'monthly',
+            'starts_at' => '2026-02-01',
+            'ends_at' => '2026-02-28',
+            'status' => 'open',
+        ]);
+
+        $walletService = app(WalletService::class);
+        $debitService = app(DebitService::class);
+
+        try {
+            $walletService->deposit($apartment, 100, [
+                'resident' => $foreignResident,
+                'financial_period' => $period,
+            ]);
+            $this->fail('Expected wallet resident tenant mismatch.');
+        } catch (DomainException $exception) {
+            $this->assertSame('Resident tenant mismatch.', $exception->getMessage());
+        }
+
+        try {
+            $walletService->deposit($apartment, 100, [
+                'resident' => $resident,
+                'financial_period' => $foreignPeriod,
+            ]);
+            $this->fail('Expected wallet financial period tenant mismatch.');
+        } catch (DomainException $exception) {
+            $this->assertSame('Financial period tenant mismatch.', $exception->getMessage());
+        }
+
+        try {
+            $debitService->createManualDebit($apartment, 50, [
+                'resident' => $foreignResident,
+                'financial_period' => $period,
+            ]);
+            $this->fail('Expected debit resident tenant mismatch.');
+        } catch (DomainException $exception) {
+            $this->assertSame('Resident tenant mismatch.', $exception->getMessage());
+        }
+
+        try {
+            $debitService->createManualDebit($apartment, 50, [
+                'resident' => $resident,
+                'financial_period' => $foreignPeriod,
+            ]);
+            $this->fail('Expected debit financial period tenant mismatch.');
+        } catch (DomainException $exception) {
+            $this->assertSame('Financial period tenant mismatch.', $exception->getMessage());
+        }
+
+        $this->assertSame(0, $tenant->walletTransactions()->count());
+        $this->assertSame(0, $tenant->debitTransactions()->count());
+    }
+
+    public function test_expense_payment_service_rejects_cross_tenant_actor_without_partial_writes(): void
+    {
+        [$tenant, $user, $building, $apartment, $resident, $period] = $this->createAccountingFixture();
+        $walletService = app(WalletService::class);
+        $paymentService = app(ExpensePaymentService::class);
+        $foreignActor = User::factory()->forTenant(Tenant::factory()->create())->create();
+
+        $walletService->deposit($apartment, 500, [
+            'resident' => $resident,
+            'financial_period' => $period,
+            'description' => 'Funding wallet',
+        ]);
+
+        $split = $this->createConfirmedSplit($tenant, $user, $building, $apartment, $period, 250);
+
+        try {
+            $paymentService->paySplit($split, $foreignActor, $resident);
+            $this->fail('Expected actor tenant mismatch.');
+        } catch (DomainException $exception) {
+            $this->assertSame('Actor tenant mismatch.', $exception->getMessage());
+        }
+
+        $this->assertDatabaseCount('expense_payments', 0);
+        $this->assertSame(1, $tenant->walletTransactions()->count());
+        $this->assertSame(0, $tenant->debitTransactions()->count());
+        $this->assertFalse($split->fresh()->is_paid);
+    }
+
+    public function test_payment_reversal_service_rejects_cross_tenant_actor_and_locked_period_without_partial_writes(): void
+    {
+        [$tenant, $user, $building, $apartment, $resident, $period] = $this->createAccountingFixture();
+        $walletService = app(WalletService::class);
+        $paymentService = app(ExpensePaymentService::class);
+        $foreignActor = User::factory()->forTenant(Tenant::factory()->create())->create();
+
+        $walletService->deposit($apartment, 1000, [
+            'resident' => $resident,
+            'financial_period' => $period,
+            'description' => 'Funding wallet',
+        ]);
+
+        $split = $this->createConfirmedSplit($tenant, $user, $building, $apartment, $period, 250);
+        $payment = $paymentService->paySplit($split, $user, $resident);
+
+        try {
+            $paymentService->reversePayment($payment, $foreignActor, 'Foreign actor');
+            $this->fail('Expected actor tenant mismatch.');
+        } catch (DomainException $exception) {
+            $this->assertSame('Actor tenant mismatch.', $exception->getMessage());
+        }
+
+        $this->assertSame(750.0, $walletService->getBalance($apartment));
+        $this->assertSame(-250.0, app(DebitService::class)->getBalance($apartment));
+        $this->assertSame(1, ExpensePayment::query()->count());
+
+        $period->forceFill([
+            'status' => 'locked',
+            'locked_at' => now(),
+            'locked_by' => $user->id,
+        ])->save();
+
+        try {
+            $paymentService->reversePayment($payment->fresh(), $user, 'Locked period');
+            $this->fail('Expected locked period exception.');
+        } catch (DomainException $exception) {
+            $this->assertSame('Financial period is locked.', $exception->getMessage());
+        }
+
+        $this->assertTrue($payment->fresh()->reversed_at === null);
+        $this->assertTrue($split->fresh()->is_paid);
+        $this->assertSame(2, $tenant->walletTransactions()->count());
+        $this->assertSame(1, $tenant->debitTransactions()->count());
+    }
+
+    public function test_wallet_and_debit_balances_remain_exact_through_rounding_and_reversal_sequences(): void
+    {
+        [$tenant, $user, $building, $apartment, $resident, $period] = $this->createAccountingFixture();
+        $walletService = app(WalletService::class);
+        $debitService = app(DebitService::class);
+
+        $walletService->deposit($apartment, 100.55, [
+            'resident' => $resident,
+            'financial_period' => $period,
+            'description' => 'Seed funding',
+        ]);
+        $walletService->deduct($apartment, 0.55, [
+            'resident' => $resident,
+            'financial_period' => $period,
+            'description' => 'Fractional charge',
+        ]);
+        $walletCreditAdjustment = $walletService->deposit($apartment, 0.10, [
+            'resident' => $resident,
+            'financial_period' => $period,
+            'description' => 'Rounding adjustment',
+        ]);
+
+        $this->assertSame(100.10, $walletService->getBalance($apartment));
+
+        $debitService->createManualDebit($apartment, 100.55, [
+            'resident' => $resident,
+            'financial_period' => $period,
+            'description' => 'Exact debit',
+        ]);
+        $debitPayment = $debitService->recordPayment($apartment, 0.55, [
+            'resident' => $resident,
+            'financial_period' => $period,
+            'description' => 'Fractional payment',
+        ]);
+
+        $this->assertSame(100.0, $debitService->getBalance($apartment));
+
+        $walletService->reverse($walletCreditAdjustment, 'Undo rounding adjustment');
+        $debitService->reverse($debitPayment, 'Undo fractional payment');
+
+        $this->assertSame(100.0, $walletService->getBalance($apartment));
+        $this->assertSame(100.55, $debitService->getBalance($apartment));
+    }
+
     /**
      * @return array{Tenant, User, Building, Apartment, Resident, FinancialPeriod}
      */
