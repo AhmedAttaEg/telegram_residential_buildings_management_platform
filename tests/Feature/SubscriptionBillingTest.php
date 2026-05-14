@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\SubscriptionPlan;
 use App\Models\Tenant;
 use App\Models\TenantSubscription;
+use App\Services\TenantSuspensionService;
 use App\Services\TenantSubscriptionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -152,6 +153,83 @@ class SubscriptionBillingTest extends TestCase
         $this->assertTrue($tenant->suspended_at?->equalTo(now()->addDays(6)));
 
         Carbon::setTestNow();
+    }
+
+    public function test_tenant_subscription_service_can_reactivate_suspended_subscription_and_restore_tenant_accessibility_fields(): void
+    {
+        Carbon::setTestNow('2026-05-11 12:00:00');
+
+        $tenant = Tenant::factory()->create();
+        $plan = SubscriptionPlan::query()->create([
+            'name' => 'Growth Annual',
+            'slug' => 'growth-annual',
+            'status' => SubscriptionPlan::STATUS_ACTIVE,
+            'billing_cycle' => SubscriptionPlan::BILLING_CYCLE_ANNUAL,
+            'price_amount' => 1200,
+            'currency' => 'EGP',
+        ]);
+
+        $service = app(TenantSubscriptionService::class);
+        $subscription = $service->attachPlan(
+            $tenant,
+            $plan,
+            TenantSubscription::STATUS_ACTIVE,
+            now(),
+        );
+
+        $service->suspend($subscription, now()->addDay());
+        $tenant->refresh();
+
+        $this->assertSame(TenantSubscription::STATUS_SUSPENDED, $tenant->subscription_status);
+        $this->assertNotNull($tenant->suspended_at);
+        $this->assertFalse($tenant->hasActiveSubscription());
+
+        $subscription = $service->activate($subscription->fresh(['subscriptionPlan']), now()->addYear());
+        $tenant->refresh();
+
+        $this->assertSame(TenantSubscription::STATUS_ACTIVE, $subscription->status);
+        $this->assertNull($subscription->grace_ends_at);
+        $this->assertNull($subscription->suspended_at);
+        $this->assertSame(TenantSubscription::STATUS_ACTIVE, $tenant->subscription_status);
+        $this->assertNull($tenant->suspended_at);
+        $this->assertTrue($tenant->hasActiveSubscription());
+        $this->assertTrue($tenant->subscription_ends_at?->equalTo(now()->addYear()));
+
+        Carbon::setTestNow();
+    }
+
+    public function test_tenant_suspension_service_activate_reopens_suspended_tenants_without_overwriting_active_lifecycle_states(): void
+    {
+        $service = app(TenantSuspensionService::class);
+
+        $suspendedTenant = Tenant::factory()->suspended()->create([
+            'subscription_status' => 'suspended',
+            'subscription_ends_at' => now()->addMonth(),
+            'suspension_reason' => 'Payment overdue',
+        ]);
+
+        $reactivatedSuspendedTenant = $service->activate($suspendedTenant);
+
+        $this->assertSame('active', $reactivatedSuspendedTenant->status);
+        $this->assertSame('active', $reactivatedSuspendedTenant->subscription_status);
+        $this->assertNull($reactivatedSuspendedTenant->suspended_at);
+        $this->assertNull($reactivatedSuspendedTenant->suspension_reason);
+        $this->assertTrue($reactivatedSuspendedTenant->isAccessible());
+
+        $graceTenant = Tenant::factory()->suspended()->create([
+            'subscription_status' => 'grace',
+            'grace_ends_at' => now()->addDay(),
+            'subscription_ends_at' => now()->addMonth(),
+            'suspension_reason' => 'Manual hold',
+        ]);
+
+        $reactivatedGraceTenant = $service->activate($graceTenant);
+
+        $this->assertSame('active', $reactivatedGraceTenant->status);
+        $this->assertSame('grace', $reactivatedGraceTenant->subscription_status);
+        $this->assertNull($reactivatedGraceTenant->suspended_at);
+        $this->assertNull($reactivatedGraceTenant->suspension_reason);
+        $this->assertTrue($reactivatedGraceTenant->isAccessible());
     }
 
     public function test_historical_tenant_subscriptions_can_coexist_while_only_latest_lifecycle_record_remains_current(): void

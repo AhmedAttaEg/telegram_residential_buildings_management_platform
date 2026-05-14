@@ -1250,10 +1250,10 @@ Accounting workflows are audit-safe.
 
 ## 23.3 Verify Subscription Lifecycle
 
-* [ ] Verify grace periods.
-* [ ] Verify suspensions.
-* [ ] Verify reactivation.
-* [ ] Verify notifications.
+* [x] Verify grace periods.
+* [x] Verify suspensions.
+* [x] Verify reactivation.
+* [x] Verify notifications.
 
 ### WtD
 

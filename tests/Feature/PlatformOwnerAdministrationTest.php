@@ -184,6 +184,90 @@ class PlatformOwnerAdministrationTest extends TestCase
             ->assertJsonPath('message', 'Tenant is suspended.');
     }
 
+    public function test_platform_owner_can_reactivate_suspended_tenant_and_restore_access_when_subscription_is_current(): void
+    {
+        CarbonImmutable::setTestNow('2026-05-07 12:00:00');
+
+        $owner = $this->actingAsPlatformOwner();
+        $tenant = Tenant::factory()->suspended()->create([
+            'subscription_status' => 'suspended',
+            'subscription_ends_at' => now()->addMonth(),
+            'suspension_reason' => 'Grace expired',
+        ]);
+        $tenantUser = User::factory()->forTenant($tenant)->create();
+        $tenantUser->roles()->attach(Role::query()->where('slug', 'resident')->value('id'));
+
+        Sanctum::actingAs($tenantUser);
+
+        $this->getJson("/api/v1/t/{$tenant->slug}/health")
+            ->assertForbidden()
+            ->assertJsonPath('message', 'Tenant is suspended.');
+
+        Sanctum::actingAs($owner);
+
+        $this->patchJson("/api/v1/owner/tenants/{$tenant->slug}/status", [
+            'action' => 'activate',
+        ])->assertOk()
+            ->assertJsonPath('data.status', 'active')
+            ->assertJsonPath('data.subscription_status', 'active')
+            ->assertJsonPath('data.suspended_at', null)
+            ->assertJsonPath('data.suspension_reason', null);
+
+        Sanctum::actingAs($tenantUser);
+
+        $this->getJson("/api/v1/t/{$tenant->slug}/health")
+            ->assertOk()
+            ->assertJsonPath('success', true);
+
+        CarbonImmutable::setTestNow();
+    }
+
+    public function test_trial_and_active_expiration_can_be_simulated_through_time_based_access_checks(): void
+    {
+        CarbonImmutable::setTestNow('2026-05-07 12:00:00');
+
+        $trialTenant = Tenant::factory()->create([
+            'subscription_status' => 'trial',
+            'trial_ends_at' => now()->addHour(),
+            'subscription_ends_at' => now()->addHour(),
+        ]);
+        $trialUser = User::factory()->forTenant($trialTenant)->create();
+        $trialUser->roles()->attach(Role::query()->where('slug', 'resident')->value('id'));
+
+        Sanctum::actingAs($trialUser);
+
+        $this->getJson("/api/v1/t/{$trialTenant->slug}/health")
+            ->assertOk();
+
+        CarbonImmutable::setTestNow(now()->addHours(2));
+
+        $this->getJson("/api/v1/t/{$trialTenant->slug}/health")
+            ->assertForbidden()
+            ->assertJsonPath('message', 'Tenant subscription is inactive.');
+
+        CarbonImmutable::setTestNow('2026-05-08 12:00:00');
+
+        $activeTenant = Tenant::factory()->create([
+            'subscription_status' => 'active',
+            'subscription_ends_at' => now()->addHour(),
+        ]);
+        $activeUser = User::factory()->forTenant($activeTenant)->create();
+        $activeUser->roles()->attach(Role::query()->where('slug', 'resident')->value('id'));
+
+        Sanctum::actingAs($activeUser);
+
+        $this->getJson("/api/v1/t/{$activeTenant->slug}/health")
+            ->assertOk();
+
+        CarbonImmutable::setTestNow(now()->addHours(2));
+
+        $this->getJson("/api/v1/t/{$activeTenant->slug}/health")
+            ->assertForbidden()
+            ->assertJsonPath('message', 'Tenant subscription is inactive.');
+
+        CarbonImmutable::setTestNow();
+    }
+
     private function actingAsPlatformOwner(): User
     {
         $owner = User::factory()->create();
