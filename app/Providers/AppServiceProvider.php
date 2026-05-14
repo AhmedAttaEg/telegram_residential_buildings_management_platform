@@ -3,6 +3,12 @@
 namespace App\Providers;
 
 use App\Contracts\ShellCommandRunner;
+use App\Services\AI\Anomaly\ProviderBackedAccountingAnomalyAnalyzer;
+use App\Services\AI\Anomaly\QueueAnomalyAnalysisDispatcher;
+use App\Services\AI\Contracts\AIProvider;
+use App\Services\AI\Contracts\AccountingAnomalyAnalyzer;
+use App\Services\AI\Contracts\AnomalyAnalysisDispatcher;
+use App\Services\AI\Providers\NullAIProvider;
 use App\Models\DebitTransaction;
 use App\Models\Expense;
 use App\Models\ExpensePayment;
@@ -36,6 +42,16 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->scoped(TenantContext::class, fn () => new TenantContext());
         $this->app->singleton(ShellCommandRunner::class, SymfonyShellCommandRunner::class);
+        $this->app->singleton(AIProvider::class, function (): AIProvider {
+            $provider = (string) (config('ai.default_provider') ?? 'null');
+
+            return match ($provider) {
+                'null' => new NullAIProvider(),
+                default => new NullAIProvider(),
+            };
+        });
+        $this->app->bind(AccountingAnomalyAnalyzer::class, ProviderBackedAccountingAnomalyAnalyzer::class);
+        $this->app->bind(AnomalyAnalysisDispatcher::class, QueueAnomalyAnalysisDispatcher::class);
     }
 
     /**

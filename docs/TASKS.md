@@ -1180,10 +1180,10 @@ Resident documentation is complete.
 
 ## 22.1 Create AI Services Namespace
 
-* [ ] Create AI service structure.
-* [ ] Create AI contracts.
-* [ ] Create prompt DTOs.
-* [ ] Add provider abstraction.
+* [x] Create AI service structure.
+* [x] Create AI contracts.
+* [x] Create prompt DTOs.
+* [x] Add provider abstraction.
 
 ### WtD
 
@@ -1197,10 +1197,10 @@ AI-ready architecture exists without business coupling.
 
 ## 22.2 Create Anomaly Detection Foundation
 
-* [ ] Define anomaly interfaces.
-* [ ] Define accounting anomaly DTOs.
-* [ ] Define alert structures.
-* [ ] Define queue workflows.
+* [x] Define anomaly interfaces.
+* [x] Define accounting anomaly DTOs.
+* [x] Define alert structures.
+* [x] Define queue workflows.
 
 ### WtD
 
