@@ -1362,8 +1362,8 @@ Session-based web authentication works without affecting API auth.
 ## 24.5 Add Policy and Web Authorization Layer
 
 * [ ] Register policies for owner, tenant, accounting, maintenance, and audit resources.
-* [ ] Add web-safe middleware and authorization flows.
-* [ ] Enforce tenant isolation on every tenant-owned web route.
+* [x] Add web-safe middleware and authorization flows.
+* [x] Enforce tenant isolation on every tenant-owned web route.
 
 ### WtD
 
@@ -1377,13 +1377,13 @@ Web routes enforce role, tenant, and resource ownership correctly.
 
 ## 24.6 Build Platform Owner Web Admin
 
-* [ ] Add owner dashboard.
-* [ ] Add tenants index/create/store/show/edit/update.
-* [ ] Add tenant suspend/reactivate workflows.
+* [x] Add owner dashboard.
+* [x] Add tenants index/create/store/show/edit/update.
+* [x] Add tenant suspend/reactivate workflows.
 * [ ] Add tenant feature flag editing.
 * [ ] Add subscription lifecycle views and updates.
-* [ ] Add subscription plan CRUD.
-* [ ] Add platform audit log pages.
+* [x] Add subscription plan CRUD.
+* [x] Add platform audit log pages.
 * [ ] Add tenant/system health pages.
 
 ### WtD
@@ -1398,9 +1398,9 @@ Platform owners can administer tenants, plans, audit logs, and health screens fr
 
 ## 24.7 Build Tenant Admin CRUD
 
-* [ ] Add tenant dashboard.
-* [ ] Add buildings CRUD.
-* [ ] Add apartments CRUD.
+* [x] Add tenant dashboard.
+* [x] Add buildings CRUD.
+* [x] Add apartments CRUD.
 * [ ] Add residents CRUD.
 * [ ] Add occupancy assignment workflows.
 * [ ] Add tenant users and staff CRUD.
@@ -1455,7 +1455,7 @@ Maintenance workflows are usable through the web application.
 
 ## 24.10 Build Resident Web Portal
 
-* [ ] Add resident dashboard.
+* [x] Add resident dashboard.
 * [ ] Add wallet and debit pages.
 * [ ] Add expense/payment history pages.
 * [ ] Add resident maintenance ticket pages.
@@ -1490,14 +1490,14 @@ Operational web reports support lightweight export workflows.
 
 ## 24.12 Add Web Feature Test Coverage
 
-* [ ] Add login/logout tests.
-* [ ] Add owner CRUD tests.
-* [ ] Add tenant isolation CRUD tests.
+* [x] Add login/logout tests.
+* [x] Add owner CRUD tests.
+* [x] Add tenant isolation CRUD tests.
 * [ ] Add resident onboarding tests.
 * [ ] Add accounting mutation and reversal tests.
 * [ ] Add maintenance workflow tests.
 * [ ] Add resident portal isolation tests.
-* [ ] Add authorization failure tests.
+* [x] Add authorization failure tests.
 
 ### WtD
 
