@@ -5,6 +5,10 @@ use App\Http\Controllers\Web\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\OwnerDashboardController;
+use App\Http\Controllers\Web\Owner\AuditLogController as OwnerAuditLogController;
+use App\Http\Controllers\Web\Owner\SubscriptionPlanController as OwnerSubscriptionPlanController;
+use App\Http\Controllers\Web\Owner\SystemHealthController as OwnerSystemHealthController;
+use App\Http\Controllers\Web\Owner\TenantController as OwnerTenantController;
 use App\Http\Controllers\Web\ResidentDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +31,12 @@ Route::middleware('auth')->group(function (): void {
 
     Route::prefix('owner')->name('owner.')->middleware('owner')->group(function (): void {
         Route::get('/dashboard', OwnerDashboardController::class)->name('dashboard');
+        Route::patch('/tenants/{tenant}/status', [OwnerTenantController::class, 'updateStatus'])->name('tenants.status');
+        Route::resource('tenants', OwnerTenantController::class);
+        Route::resource('subscription-plans', OwnerSubscriptionPlanController::class);
+        Route::get('/audit-logs', [OwnerAuditLogController::class, 'index'])->name('audit-logs.index');
+        Route::get('/audit-logs/{auditLog}', [OwnerAuditLogController::class, 'show'])->name('audit-logs.show');
+        Route::get('/system-health', OwnerSystemHealthController::class)->name('system-health');
     });
 
     Route::prefix('admin')->name('admin.')->middleware('tenant.admin')->group(function (): void {

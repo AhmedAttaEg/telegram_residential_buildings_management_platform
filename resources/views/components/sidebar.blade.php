@@ -4,7 +4,11 @@
     $links = [];
 
     if ($user?->isPlatformOwner() && $user->tenant_id === null) {
-        $links[] = ['label' => __('web.nav.owner_dashboard'), 'route' => 'owner.dashboard', 'active' => request()->routeIs('owner.*')];
+        $links[] = ['label' => __('web.nav.owner_dashboard'), 'route' => 'owner.dashboard', 'active' => request()->routeIs('owner.dashboard')];
+        $links[] = ['label' => 'Tenants', 'route' => 'owner.tenants.index', 'active' => request()->routeIs('owner.tenants.*')];
+        $links[] = ['label' => 'Subscription Plans', 'route' => 'owner.subscription-plans.index', 'active' => request()->routeIs('owner.subscription-plans.*')];
+        $links[] = ['label' => 'Audit Logs', 'route' => 'owner.audit-logs.index', 'active' => request()->routeIs('owner.audit-logs.*')];
+        $links[] = ['label' => 'System Health', 'route' => 'owner.system-health', 'active' => request()->routeIs('owner.system-health')];
     }
 
     if ($user !== null && app(\App\Support\WebDashboardResolver::class)->canAccessTenantAdmin($user)) {
