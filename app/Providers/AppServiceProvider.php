@@ -27,6 +27,8 @@ use App\Observers\PermissionRoleObserver;
 use App\Observers\RoleUserObserver;
 use App\Support\SymfonyShellCommandRunner;
 use App\Support\TenantContext;
+use App\Support\WebDashboardResolver;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -59,6 +61,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        RedirectIfAuthenticated::redirectUsing(function (Request $request): string {
+            $user = $request->user();
+
+            if (! $user instanceof \App\Models\User) {
+                return route('login');
+            }
+
+            return app(WebDashboardResolver::class)->pathFor($user);
+        });
+
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
 
         foreach ([

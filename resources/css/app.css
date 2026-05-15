@@ -9,3 +9,31 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+@layer base {
+    body {
+        @apply bg-stone-100 text-stone-900 antialiased;
+    }
+
+    [dir='rtl'] body {
+        direction: rtl;
+    }
+}
+
+@layer components {
+    .app-shell {
+        @apply min-h-screen bg-stone-100;
+    }
+
+    .app-card {
+        @apply rounded-2xl border border-stone-200 bg-white shadow-sm;
+    }
+
+    .app-card-header {
+        @apply border-b border-stone-200 px-6 py-4;
+    }
+
+    .app-card-body {
+        @apply px-6 py-5;
+    }
+}

@@ -1287,3 +1287,244 @@ Subscription lifecycle works correctly.
 * Documentation exists for all critical roles.
 * Platform is scalable toward VPS/cloud migration.
 * AI-ready architecture foundation exists.
+
+---
+
+# Milestone 24: Full Blade Admin Web Application
+
+## 24.1 Write Web Admin Completion Plan
+
+* [x] Add `docs/WEB_ADMIN_COMPLETION_PLAN.md`.
+* [x] Document scope, constraints, implementation order, and module coverage.
+* [x] Align the plan with existing API-first and shared-hosting constraints.
+
+### WtD
+
+Review the document for implementation completeness.
+
+### DoD
+
+Milestone 24 has a committed implementation plan.
+
+---
+
+## 24.2 Update Project Documentation Index
+
+* [x] Update `docs/README.md`.
+* [x] Replace the generic root `README.md`.
+* [x] Link the Blade web application completion plan and usage docs.
+
+### WtD
+
+Open the updated readme files and verify references are accurate.
+
+### DoD
+
+Project documentation reflects the web-application completion effort.
+
+---
+
+## 24.3 Build Web Foundation
+
+* [x] Add authenticated and guest Blade layouts.
+* [x] Add reusable Blade components.
+* [x] Add Arabic and English locale switching.
+* [x] Add RTL handling for Arabic.
+* [x] Add role-aware navigation and dashboard resolution.
+
+### WtD
+
+Open the web UI and verify the shared layout renders for authenticated users.
+
+### DoD
+
+Blade foundation supports localized, responsive, reusable web screens.
+
+---
+
+## 24.4 Add Web Authentication
+
+* [x] Add login and logout routes, controllers, views, and requests.
+* [x] Preserve existing API and Sanctum authentication.
+* [x] Redirect platform owners, tenant staff, and residents to the correct dashboards.
+* [x] Add localized validation and error feedback.
+
+### WtD
+
+Log in with representative owner, tenant staff, and resident users.
+
+### DoD
+
+Session-based web authentication works without affecting API auth.
+
+---
+
+## 24.5 Add Policy and Web Authorization Layer
+
+* [ ] Register policies for owner, tenant, accounting, maintenance, and audit resources.
+* [ ] Add web-safe middleware and authorization flows.
+* [ ] Enforce tenant isolation on every tenant-owned web route.
+
+### WtD
+
+Attempt authorized and unauthorized access across owner, tenant, and resident routes.
+
+### DoD
+
+Web routes enforce role, tenant, and resource ownership correctly.
+
+---
+
+## 24.6 Build Platform Owner Web Admin
+
+* [ ] Add owner dashboard.
+* [ ] Add tenants index/create/store/show/edit/update.
+* [ ] Add tenant suspend/reactivate workflows.
+* [ ] Add tenant feature flag editing.
+* [ ] Add subscription lifecycle views and updates.
+* [ ] Add subscription plan CRUD.
+* [ ] Add platform audit log pages.
+* [ ] Add tenant/system health pages.
+
+### WtD
+
+Use a platform owner account to complete the owner dashboard workflow.
+
+### DoD
+
+Platform owners can administer tenants, plans, audit logs, and health screens from Blade.
+
+---
+
+## 24.7 Build Tenant Admin CRUD
+
+* [ ] Add tenant dashboard.
+* [ ] Add buildings CRUD.
+* [ ] Add apartments CRUD.
+* [ ] Add residents CRUD.
+* [ ] Add occupancy assignment workflows.
+* [ ] Add tenant users and staff CRUD.
+* [ ] Add role assignment by slug.
+* [ ] Add tenant settings and audit log pages.
+
+### WtD
+
+Use a tenant admin account to create and manage tenant records through Blade.
+
+### DoD
+
+Tenant staff can manage operational data safely within tenant boundaries.
+
+---
+
+## 24.8 Build Accounting Admin UI
+
+* [ ] Add financial period pages and close/reopen actions.
+* [ ] Add wallet transaction pages and deposit workflow.
+* [ ] Add debit transaction pages and manual debit workflow.
+* [ ] Add expenses, split allocation, payment, and reversal workflows.
+* [ ] Add chart of accounts pages.
+* [ ] Add journal entry create/show/post pages.
+* [ ] Add trial balance, wallet, debit, and outstanding balance reports.
+
+### WtD
+
+Run end-to-end accounting workflows through the Blade UI.
+
+### DoD
+
+Accounting mutations reuse existing services and preserve ledger truth.
+
+---
+
+## 24.9 Build Maintenance Admin UI
+
+* [ ] Add maintenance ticket CRUD and status workflows.
+* [ ] Add work order CRUD and assignment workflows.
+* [ ] Add SLA fields and maintenance reporting pages.
+
+### WtD
+
+Use tenant maintenance flows to create, assign, and track tickets and work orders.
+
+### DoD
+
+Maintenance workflows are usable through the web application.
+
+---
+
+## 24.10 Build Resident Web Portal
+
+* [ ] Add resident dashboard.
+* [ ] Add wallet and debit pages.
+* [ ] Add expense/payment history pages.
+* [ ] Add resident maintenance ticket pages.
+* [ ] Add resident profile page.
+* [ ] Add notifications page when database notifications exist.
+
+### WtD
+
+Log in as a resident and verify only resident-owned data is visible.
+
+### DoD
+
+Residents can use a safe, isolated web portal for self-service workflows.
+
+---
+
+## 24.11 Add Reports and CSV Exports
+
+* [ ] Add CSV exports for tenants, residents, apartments, wallet, debit, outstanding balances, maintenance, and audit logs.
+* [ ] Use streamed responses or standard downloads only.
+* [ ] Avoid heavy dependencies.
+
+### WtD
+
+Download representative CSV reports and inspect the exported contents.
+
+### DoD
+
+Operational web reports support lightweight export workflows.
+
+---
+
+## 24.12 Add Web Feature Test Coverage
+
+* [ ] Add login/logout tests.
+* [ ] Add owner CRUD tests.
+* [ ] Add tenant isolation CRUD tests.
+* [ ] Add resident onboarding tests.
+* [ ] Add accounting mutation and reversal tests.
+* [ ] Add maintenance workflow tests.
+* [ ] Add resident portal isolation tests.
+* [ ] Add authorization failure tests.
+
+### WtD
+
+Run:
+
+```bash
+php artisan test
+```
+
+### DoD
+
+Milestone 24 behavior is covered by automated feature tests.
+
+---
+
+## 24.13 Finalize Web Admin Documentation
+
+* [ ] Document web admin access.
+* [ ] Document first platform owner creation.
+* [ ] Document owner and tenant workflows.
+* [ ] Document resident onboarding, accounting, maintenance, and reports.
+* [ ] Document shared-hosting route/cache/asset notes.
+
+### WtD
+
+Review all documentation for completeness against the delivered Blade UI.
+
+### DoD
+
+Web application workflows are documented for operators and implementers.

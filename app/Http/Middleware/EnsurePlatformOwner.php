@@ -17,13 +17,22 @@ class EnsurePlatformOwner
         $user = $request->user();
 
         if ($user === null || ! $user->isPlatformOwner()) {
-            return ApiResponse::error('Platform owner access is required.', Response::HTTP_FORBIDDEN);
+            return $this->forbidden($request, 'Platform owner access is required.');
         }
 
         if ($user->tenant_id !== null) {
-            return ApiResponse::error('Tenant-bound users cannot access owner administration.', Response::HTTP_FORBIDDEN);
+            return $this->forbidden($request, 'Tenant-bound users cannot access owner administration.');
         }
 
         return $next($request);
+    }
+
+    private function forbidden(Request $request, string $message): Response
+    {
+        if (ApiResponse::isApiRequest($request)) {
+            return ApiResponse::error($message, Response::HTTP_FORBIDDEN);
+        }
+
+        abort(Response::HTTP_FORBIDDEN, $message);
     }
 }

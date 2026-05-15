@@ -26,6 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__.'/../app/Console/Commands',
     ])
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
         $middleware->alias([
             'owner' => \App\Http\Middleware\EnsurePlatformOwner::class,
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,
@@ -33,6 +37,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'resident.apartment' => \App\Http\Middleware\EnsureResidentHasApartmentAccess::class,
             'tenant' => \App\Http\Middleware\ResolveTenant::class,
             'tenant.feature' => \App\Http\Middleware\EnsureTenantFeatureEnabled::class,
+            'tenant.admin' => \App\Http\Middleware\EnsureTenantAdminUser::class,
+            'resident.portal' => \App\Http\Middleware\EnsureResidentPortalUser::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -3,9 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Support\ApiResponse;
 
 class EnsureUserHasRole
 {
@@ -17,9 +17,13 @@ class EnsureUserHasRole
         $user = $request->user();
 
         if ($user === null || ! $user->hasRole($role)) {
-            return new JsonResponse([
-                'message' => "Role [{$role}] is required.",
-            ], Response::HTTP_FORBIDDEN);
+            $message = "Role [{$role}] is required.";
+
+            if (ApiResponse::isApiRequest($request)) {
+                return ApiResponse::error($message, Response::HTTP_FORBIDDEN);
+            }
+
+            abort(Response::HTTP_FORBIDDEN, $message);
         }
 
         return $next($request);

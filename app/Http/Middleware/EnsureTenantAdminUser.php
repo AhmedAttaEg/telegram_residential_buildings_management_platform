@@ -2,22 +2,29 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use App\Support\ApiResponse;
+use App\Support\WebDashboardResolver;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserHasPermission
+class EnsureTenantAdminUser
 {
+    public function __construct(
+        private readonly WebDashboardResolver $dashboardResolver,
+    ) {
+    }
+
     /**
      * @param  Closure(Request): Response  $next
      */
-    public function handle(Request $request, Closure $next, string $permission): Response
+    public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
 
-        if ($user === null || ! $user->hasPermission($permission)) {
-            $message = "Permission [{$permission}] is required.";
+        if (! $user instanceof User || ! $this->dashboardResolver->canAccessTenantAdmin($user)) {
+            $message = 'Tenant admin access is required.';
 
             if (ApiResponse::isApiRequest($request)) {
                 return ApiResponse::error($message, Response::HTTP_FORBIDDEN);

@@ -27,11 +27,11 @@ class EnsureResidentHasApartmentAccess
         $apartment = $request->route('apartment');
 
         if (! $resident instanceof Resident) {
-            return ApiResponse::error('Resident profile is required.', Response::HTTP_FORBIDDEN);
+            return $this->forbidden($request, 'Resident profile is required.');
         }
 
         if (! $tenant instanceof Tenant || $resident->tenant_id !== $tenant->id || $user?->tenant_id !== $tenant->id) {
-            return ApiResponse::error('Resident tenant mismatch.', Response::HTTP_FORBIDDEN);
+            return $this->forbidden($request, 'Resident tenant mismatch.');
         }
 
         if (is_string($apartment)) {
@@ -39,7 +39,7 @@ class EnsureResidentHasApartmentAccess
         }
 
         if (! $apartment instanceof Apartment || $apartment->tenant_id !== $tenant->id) {
-            return ApiResponse::error('Apartment access is not allowed.', Response::HTTP_FORBIDDEN);
+            return $this->forbidden($request, 'Apartment access is not allowed.');
         }
 
         $isAccessible = $resident->apartments()
@@ -49,12 +49,21 @@ class EnsureResidentHasApartmentAccess
             ->exists();
 
         if (! $isAccessible) {
-            return ApiResponse::error('Apartment access is not allowed.', Response::HTTP_FORBIDDEN);
+            return $this->forbidden($request, 'Apartment access is not allowed.');
         }
 
         $request->attributes->set('resident', $resident);
         $request->attributes->set('resident_apartment', $apartment->loadMissing('building'));
 
         return $next($request);
+    }
+
+    private function forbidden(Request $request, string $message): Response
+    {
+        if (ApiResponse::isApiRequest($request)) {
+            return ApiResponse::error($message, Response::HTTP_FORBIDDEN);
+        }
+
+        abort(Response::HTTP_FORBIDDEN, $message);
     }
 }
