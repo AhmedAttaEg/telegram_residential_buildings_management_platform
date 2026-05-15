@@ -13,6 +13,8 @@
 
     if ($user !== null && app(\App\Support\WebDashboardResolver::class)->canAccessTenantAdmin($user)) {
         $links[] = ['label' => __('web.nav.admin_dashboard'), 'route' => 'admin.dashboard', 'active' => request()->routeIs('admin.*')];
+        $links[] = ['label' => 'Buildings', 'route' => 'admin.buildings.index', 'active' => request()->routeIs('admin.buildings.*')];
+        $links[] = ['label' => 'Apartments', 'route' => 'admin.apartments.index', 'active' => request()->routeIs('admin.apartments.*')];
     }
 
     if ($user !== null && app(\App\Support\WebDashboardResolver::class)->canAccessResidentPortal($user)) {

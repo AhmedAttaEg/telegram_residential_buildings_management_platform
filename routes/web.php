@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Web\AdminDashboardController;
+use App\Http\Controllers\Web\Admin\ApartmentController as AdminApartmentController;
+use App\Http\Controllers\Web\Admin\BuildingController as AdminBuildingController;
 use App\Http\Controllers\Web\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\LocaleController;
@@ -41,6 +43,8 @@ Route::middleware('auth')->group(function (): void {
 
     Route::prefix('admin')->name('admin.')->middleware('tenant.admin')->group(function (): void {
         Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
+        Route::resource('buildings', AdminBuildingController::class);
+        Route::resource('apartments', AdminApartmentController::class);
     });
 
     Route::prefix('resident')->name('resident.')->middleware('resident.portal')->group(function (): void {
