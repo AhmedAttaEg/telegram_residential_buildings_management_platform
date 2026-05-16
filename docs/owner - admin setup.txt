@@ -1,0 +1,69 @@
+How to register an admin?
+
+
+• There is no self-service admin registration flow implemented yet.
+
+  You currently create admins manually with php artisan tinker.
+
+  Platform owner admin
+  This user must have:
+
+  - tenant_id = null
+  - role slug platform_owner
+
+  php artisan tinker
+
+  use App\Models\User;
+  use App\Models\Role;
+
+  $user = User::create([
+      'name' => 'Platform Owner',
+      'email' => 'owner@example.com',
+      'password' => bcrypt('ChangeThisNow123!'),
+      'status' => 'active',
+      'preferred_locale' => 'ar',
+      'tenant_id' => null,
+  ]);
+
+  $user->roles()->attach(
+      Role::where('slug', 'platform_owner')->value('id')
+  );
+
+  Then log in at /login.
+  This user should be redirected to /owner/dashboard.
+
+  Tenant admin
+  This user must belong to a tenant and usually gets the tenant_owner role.
+
+  php artisan tinker
+
+  use App\Models\User;
+  use App\Models\Role;
+  use App\Models\Tenant;
+
+  $tenant = Tenant::where('slug', 'your-tenant-slug')->firstOrFail();
+
+  $user = User::create([
+      'name' => 'Tenant Admin',
+      'email' => 'admin@example.com',
+      'password' => bcrypt('ChangeThisNow123!'),
+      'status' => 'active',
+      'preferred_locale' => 'ar',
+      'tenant_id' => $tenant->id,
+  ]);
+
+  $user->roles()->attach(
+      Role::where('slug', 'tenant_owner')->value('id')
+  );
+
+  This user should be redirected to /admin/dashboard.
+
+  Important
+  If roles are not seeded yet, run:
+
+  php artisan db:seed --class=RolePermissionSeeder
+
+  If you want, I can implement a proper admin-user creation screen next:
+
+  - platform owner creates tenant admins from Blade
+  - optional first-owner bootstrap command for production setup
